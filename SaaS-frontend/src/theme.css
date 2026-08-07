@@ -1,0 +1,88 @@
+/* ============================================================
+   Design Tokens — "Ledger" theme
+   Import this once in src/main.ts:  import './theme.css'
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* Color */
+  --ink: #14171c;
+  --ink-soft: #2b2f36;
+  --paper: #fbfaf6;
+  --surface: #ffffff;
+  --line: #e4e1d8;
+  --forest: #0e5c4a;
+  --forest-dark: #0a4638;
+  --forest-soft: #e7f0ed;
+  --gold: #b8872f;
+  --gold-soft: #f6ecd9;
+  --slate: #6b7280;
+  --danger: #a3372c;
+  --danger-soft: #f6e9e7;
+
+  /* Type */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+
+  /* Layout */
+  --radius: 3px;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-body);
+  color: var(--ink);
+  background: var(--paper);
+}
+
+/* Shared eyebrow / mono label style, used for stat labels, tabs, nav */
+.ledger-label {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--slate);
+}
+
+/* Shared primary button */
+.btn-primary {
+  font-family: var(--font-body);
+  font-weight: 600;
+  font-size: 15px;
+  color: #fff;
+  background: var(--forest);
+  border: none;
+  border-radius: var(--radius);
+  padding: 13px 20px;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+.btn-primary:hover {
+  background: var(--forest-dark);
+}
+
+/* Shared ledger-style text input: underline only, no box */
+.ledger-input {
+  width: 100%;
+  font-family: var(--font-body);
+  font-size: 15px;
+  color: var(--ink);
+  background: transparent;
+  border: none;
+  border-bottom: 1.5px solid var(--line);
+  padding: 10px 2px;
+  outline: none;
+  transition: border-color 0.2s ease;
+}
+.ledger-input:focus {
+  border-bottom-color: var(--forest);
+}
+.ledger-input::placeholder {
+  color: #b4b2a9;
+}
