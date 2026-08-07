@@ -19,7 +19,7 @@
             >
             Mobile
           </button>
-
+//change some for try
         </div>
 
         <div class="input-group" v-if="loginType=='Mobile'">
@@ -98,7 +98,7 @@ const login = ref<Login>({
   password: "",
 
 });
-
+//this changes happen in login
 const onLogin = async() => {
   login.value.loginType = loginType.value;
   // console.log(login.value);
