@@ -1,69 +1,51 @@
 <template>
   <div class="clients-view">
-    <!-- <div class="welcome-block">
+    <!-- Client Form Drawer component -->
+    <ClientDrawer 
+      :is-open="showAddClient"
+      :client="selectedClient"
+      @close="closeDrawer"
+      @saved="fetchClient"
+    />
+
+    <!-- Welcome Block / Overview -->
+    <div class="welcome-block">
       <p class="ledger-label">Overview</p>
       <h1>Clients</h1>
       <p class="subtitle">Here clients details will be shown.</p>
-    </div> -->
+    </div>
 
-    <!-- Add Client Form (Shown conditionally) -->
-    <div v-if="showAddClient" class="form-container">
-      <div class="d-flex justify-content-between align-items-center">
-        <h2>{{ editingClientId !== null ? 'Edit Client' : 'Add New Client' }}</h2>
-        <button type="button" class="btn-close" @click="cancelClient()"></button>
+    <!-- Loading State -->
+    <div v-if="isLoading" class="loading-state">
+      <div class="spinner"></div>
+      <p>Loading clients...</p>
+    </div>
+
+    <!-- Empty State -->
+    <div v-else-if="clients.length === 0" class="empty-state-container">
+      <div class="empty-state-card">
+        <div class="empty-icon-wrapper">
+          <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+            <circle cx="9" cy="7" r="4"></circle>
+            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+          </svg>
+        </div>
+        <h3>No clients found!</h3>
+        <p>Looks like you're just getting started. Begin by adding new clients to manage your sales.</p>
+        <button type="button" @click="addClient()" class="btn-primary">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: -2px;">
+            <line x1="12" y1="5" x2="12" y2="19"></line>
+            <line x1="5" y1="12" x2="19" y2="12"></line>
+          </svg>
+          Add Client
+        </button>
       </div>
-      <form @submit.prevent="submitClient">
-        <div class="form-grid">
-          <div class="form-row">
-            <label>Name</label>
-            <input class="ledger-input" type="text" v-model="payload.name" required placeholder="Alex Rivera" />
-          </div>
-
-          <div class="form-row">
-            <label>Email</label>
-            <input class="ledger-input" type="email" v-model="payload.email" required placeholder="alex@company.com" />
-          </div>
-
-          <div class="form-row">
-            <label>Phone</label>
-            <input class="ledger-input" type="tel" v-model="payload.phone" required placeholder="+91 90000 00000"
-              pattern="[6-9][0-9]{9}" maxlength="10" inputmode="numeric" />
-          </div>
-
-          <div class="form-row">
-            <label>Gender</label>
-            <div class="pill-group">
-              <label class="pill" :class="{ active: payload.gender === 'male' }">
-                <input type="radio" value="male" v-model="payload.gender" required />
-                Male
-              </label>
-              <label class="pill" :class="{ active: payload.gender === 'female' }">
-                <input type="radio" value="female" v-model="payload.gender" required />
-                Female
-              </label>
-              <label class="pill" :class="{ active: payload.gender === 'other' }">
-                <input type="radio" value="other" v-model="payload.gender" required />
-                Other
-              </label>
-            </div>
-          </div>
-
-          <div class="form-row full-width">
-            <label>Company Name</label>
-            <input class="ledger-input" type="text" v-model="payload.companyName" required placeholder="Company Ltd." />
-          </div>
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" class="btn-primary">Submit</button>
-          <!-- <button type="button" @click="showAddClient = false" class="btn-secondary">Cancel</button> -->
-          <button type="button" @click="cancelClient()" class="btn-secondary">Cancel</button>
-        </div>
-      </form>
     </div>
 
     <!-- Table -->
-    <div class="table-container">
+    <div v-else class="table-container">
       <div class="table-head">
         <h2>All Clients</h2>
         <button type="button" @click="addClient()" class="btn-primary">add client</button>
@@ -157,37 +139,7 @@
 <script setup lang="ts">
 import { onMounted, ref, watch } from 'vue';
 import api from '@/services/ApiService';
-// const showAddClient = ref(false)
-const clients = ref<client[]>([])
-const activeClientId = ref<number | null>(null)
-const editingClientId = ref<number | null>(null)
-const showAddClient = ref(false)
-const payload = ref({
-  name: '',
-  email: '',
-  phone: '',
-  gender: '',
-  companyName: ''
-})
-
-const submitClient = async () => {
-  try {
-    console.log("Submit button clicked")
-    if (editingClientId.value !== null) {
-      // Update logic
-      const response = await api.put(`/clients/${editingClientId.value}`, payload.value)
-      console.log("update response", response)
-    } else {
-      // Create logic
-      const response = await api.post("/clients", payload.value)
-      console.log("add client response", response)
-    }
-    await fetchClient()
-    cancelClient()
-  } catch (e) {
-    console.log("Error in submitClient:", e)
-  }
-}
+import ClientDrawer from '@/components/ClientDrawer.vue';
 
 interface client {
   id: number | null
@@ -198,7 +150,29 @@ interface client {
   company_name?: string | null
 }
 
-const deleteClient = async (id: number) => {
+const clients = ref<client[]>([])
+const activeClientId = ref<number | null>(null)
+const selectedClient = ref<client | null>(null)
+const showAddClient = ref(false)
+const isLoading = ref(true)
+
+const fetchClient = async () => {
+  isLoading.value = true
+  try {
+    const response = await api.get('/clients')
+    console.log("response", response)
+    console.log("client details.data", response.data.data)
+    clients.value = response.data.data;
+  }
+  catch (error) {
+    console.log(error)
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const deleteClient = async (id: number | null) => {
+  if (id === null) return
   try {
     console.log("delete button clicked", id)
     const response = await api.delete(`/clients/${id}`)
@@ -210,47 +184,21 @@ const deleteClient = async (id: number) => {
   }
 }
 
-const fetchClient = async () => {
-  try {
-    const response = await api.get('/clients')
-    console.log("response", response)
-    console.log("client details.data", response.data.data)
-    clients.value = response.data.data;
-  }
-  catch (error) {
-    console.log(error)
-  }
-}
-
-const addClient = async () => {
+const addClient = () => {
   console.log("add client btn clicked")
-  editingClientId.value = null
+  selectedClient.value = null
   showAddClient.value = true
 }
 
-const editClient = async (client: client) => {
+const editClient = (client: client) => {
   console.log("edit client btn clicked", client)
-  editingClientId.value = client.id
+  selectedClient.value = client
   showAddClient.value = true
-  payload.value = {
-    name: client.name ?? '',
-    email: client.email ?? '',
-    phone: client.phone ?? '',
-    gender: client.gender ?? '',
-    companyName: client.company_name ?? ''
-  }
 }
 
-const cancelClient = () => {
+const closeDrawer = () => {
   showAddClient.value = false
-  editingClientId.value = null
-  payload.value = {
-    name: '',
-    email: '',
-    phone: '',
-    gender: '',
-    companyName: ''
-  }
+  selectedClient.value = null
 }
 
 watch(activeClientId, (newValue) => {
@@ -610,5 +558,73 @@ tr:hover td {
 .dropdown-item.delete-btn:hover {
   background: var(--danger-soft);
   color: var(--danger);
+}
+
+/* Empty State Styles */
+.empty-state-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 80px 24px;
+  background: #ffffff;
+  border: 1px solid #e4e1d8;
+  border-radius: 3px;
+}
+
+.empty-state-card {
+  text-align: center;
+  max-width: 420px;
+}
+
+.empty-icon-wrapper {
+  display: inline-flex;
+  justify-content: center;
+  align-items: center;
+  width: 80px;
+  height: 80px;
+  border-radius: 50%;
+  background: var(--forest-soft);
+  color: var(--forest);
+  margin-bottom: 24px;
+}
+
+.empty-state-card h3 {
+  font-family: 'Fraunces', Georgia, serif;
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--ink);
+  margin: 0 0 10px;
+}
+
+.empty-state-card p {
+  font-size: 14px;
+  color: var(--slate);
+  line-height: 1.6;
+  margin: 0 0 24px;
+}
+
+/* Loading State & Spinner */
+.loading-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 80px 24px;
+}
+
+.spinner {
+  width: 28px;
+  height: 28px;
+  border: 2px solid var(--line);
+  border-top-color: var(--forest);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+  margin-bottom: 12px;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 </style>
