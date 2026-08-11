@@ -10,18 +10,6 @@
     </header>
 
     <div class="main">
-      <!-- Sidebar -->
-      <aside class="sidebar">
-        <nav>
-          <ul>
-            <li v-for="item in navItems" :key="item.label" :class="{ active: item.active }">
-              <span class="nav-icon">{{ item.icon }}</span>
-              <span>{{ item.label }}</span>
-            </li>
-          </ul>
-        </nav>
-      </aside>
-
       <!-- Content -->
       <section class="content">
         <div class="welcome-block">
@@ -73,17 +61,11 @@
 
 <script setup lang="ts">
 import { useRouter } from 'vue-router'
-
+import Sidebar from '@/components/Sidebar.vue'
 const router = useRouter()
 
-const navItems = [
-  { label: 'Dashboard', icon: '—', active: true },
-  { label: 'Users', icon: '—', active: false },
-  { label: 'Orders', icon: '—', active: false },
-  { label: 'Payments', icon: '—', active: false },
-  { label: 'Reports', icon: '—', active: false },
-  { label: 'Settings', icon: '—', active: false },
-]
+
+
 
 const stats = [
   { label: 'Total users', value: '150', change: '+12 this week', trend: 'up' },
@@ -193,54 +175,7 @@ const handleLogout = () => {
   min-height: calc(100vh - 64px);
 }
 
-/* Sidebar */
-.sidebar {
-  width: 220px;
-  background: var(--paper);
-  border-right: 1px solid var(--line);
-  padding: 24px 0;
-  flex-shrink: 0;
-}
 
-.sidebar ul {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-
-.sidebar li {
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  padding: 12px 24px;
-  font-size: 14px;
-  font-weight: 500;
-  color: var(--slate);
-  cursor: pointer;
-  border-left: 2px solid transparent;
-  transition: 0.15s ease;
-}
-
-.nav-icon {
-  font-family: var(--font-mono);
-  color: var(--line);
-  width: 10px;
-}
-
-.sidebar li:hover {
-  color: var(--ink);
-  background: rgba(0,0,0,0.02);
-}
-
-.sidebar li.active {
-  color: var(--forest-dark);
-  border-left-color: var(--forest);
-  background: var(--forest-soft);
-}
-
-.sidebar li.active .nav-icon {
-  color: var(--forest);
-}
 
 /* Content */
 .content {

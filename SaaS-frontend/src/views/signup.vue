@@ -140,7 +140,7 @@ const onSubmit = async () => {
     const response = await api.post('/user', user.value)
     localStorage.setItem('accessToken', response.data.accessToken)
     localStorage.setItem('refreshToken', response.data.refreshToken)
-    await router.push('/home')
+    await router.push('/dashboard')
   } catch (error: any) {
     errorMsg.value =
       error.response?.data?.error || error.response?.data?.message || error.message || 'Registration failed.'

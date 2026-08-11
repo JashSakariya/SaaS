@@ -1,21 +1,20 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-import Home from "../views/Home.vue"
+// import Home from "../views/Home.vue"
 import Signup from '@/views/signup.vue'
 import Login from '@/views/login.vue'
-
+import Clients from '@/views/clients.vue'
+import DashboardLayout from '@/layouts/DashboardLayout.vue'
+import Dashboard from '@/views/Home.vue'
+import ClientsLayout from '@/layouts/ClientsLayout.vue'
+import ClientDetails from '@/views/clientDetails.vue'
 
 const router = createRouter({
   history: createWebHistory(),
   routes: [
+    // authentication
     {
-      path: '/home',
-      name: 'Home',
-      component: Home,
-      meta: { requiresAuth: true }
-    },
-    {
-      path: '/',
+      path: '/signup',
       name: 'signup',
       component: Signup
     },
@@ -23,8 +22,45 @@ const router = createRouter({
       path: '/login',
       name: 'login',
       component: Login
-    }
+    },
 
+    // main application
+
+    {
+      path: '/',
+      name: 'dashboard',
+      component: DashboardLayout,
+   
+
+    children: [
+        {
+          path: '',
+          redirect: '/dashboard',
+          // component: Dashboard,
+        },
+
+        {
+          path: 'dashboard',
+          component: Dashboard,
+        },
+
+        {
+          path: 'clients',
+          component: ClientsLayout,
+
+          children:[
+            {
+              path: '',
+              component:Clients,
+            },
+            {
+              path: ':id',
+              component:ClientDetails,
+            }
+          ]
+        }
+      ]
+    },
   ]
 })
 

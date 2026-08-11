@@ -112,7 +112,7 @@ const onLogin = async () => {
     const response = await api.post('/login', login.value)
     localStorage.setItem('accessToken', response.data.accessToken)
     localStorage.setItem('refreshToken', response.data.refreshToken)
-    router.push('/home')
+    router.push('/dashboard')
   } catch (error: any) {
     errorMsg.value =
       error.response?.data?.error || error.response?.data?.message || error.message || 'Login failed.'
