@@ -49,7 +49,8 @@
 
           <div class="row">
             <label>Mobile number</label>
-            <input class="ledger-input" v-model="user.mobile_number" type="tel" placeholder="+91 90000 00000" />
+            <input class="ledger-input" v-model="user.mobile_number" type="tel" maxlength="10"
+              placeholder="+91 90000 00000" />
           </div>
 
           <div class="row">
