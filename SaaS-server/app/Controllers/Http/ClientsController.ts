@@ -1,4 +1,5 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
+import Client from 'App/Models/Client'
 import Clients from 'App/Models/Client'
 
 export default class ClientsController {
@@ -10,7 +11,28 @@ export default class ClientsController {
             message: 'Clients fetched successfully',
         })
     }
+    
+    public async show({ params, response }: HttpContextContract) {
+        const clientId = params.id
 
+        try {
+            const client = await Client.findOrFail(clientId)
+            return response.status(200).json({
+                message: "Client fetched successfully",
+                data: client
+            })
+        } catch (error) {
+            if (error.code === 'E_ROW_NOT_FOUND') {
+                return response.status(404).json({
+                    message: `Client with ID ${clientId} not found`
+                })
+            }
+            console.error('Error fetching client:', error)
+            return response.status(500).json({
+                message: "An error occurred while fetching the client"
+            })
+        }
+    }
 
 
     public async store({ request, response }: HttpContextContract) {

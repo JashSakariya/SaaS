@@ -9,6 +9,7 @@ import Dashboard from '@/views/Home.vue'
 import ClientsLayout from '@/layouts/ClientsLayout.vue'
 import ClientDetails from '@/views/clientDetails.vue'
 
+
 const router = createRouter({
   history: createWebHistory(),
   routes: [
@@ -30,9 +31,9 @@ const router = createRouter({
       path: '/',
       name: 'dashboard',
       component: DashboardLayout,
-   
 
-    children: [
+
+      children: [
         {
           path: '',
           redirect: '/dashboard',
@@ -48,15 +49,17 @@ const router = createRouter({
           path: 'clients',
           component: ClientsLayout,
 
-          children:[
+          children: [
             {
               path: '',
-              component:Clients,
+              component: Clients,
             },
             {
               path: ':id',
-              component:ClientDetails,
-            }
+              component: ClientDetails,
+            },
+
+
           ]
         }
       ]
