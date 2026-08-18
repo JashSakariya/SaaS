@@ -1,72 +1,51 @@
 <template>
-  <div class="dashboard">
-    <!-- Top bar -->
-    <header class="topbar">
-      <div class="brand-mark">MyApp</div>
-      <div class="topbar-right">
-        <span class="welcome">Welcome, Jash</span>
-        <button class="logout-btn" @click="handleLogout">Logout</button>
+  <div class="dashboard-view">
+    <div class="welcome-block">
+      <p class="ledger-label">Overview</p>
+      <h1>Dashboard</h1>
+      <p class="subtitle">Here's how things stand today.</p>
+    </div>
+
+    <!-- Stat cards -->
+    <div class="cards">
+      <div class="card" v-for="stat in stats" :key="stat.label">
+        <p class="ledger-label">{{ stat.label }}</p>
+        <p class="card-value">{{ stat.value }}</p>
+        <div class="card-rule" />
+        <p class="card-delta" :class="stat.trend">{{ stat.change }}</p>
       </div>
-    </header>
+    </div>
 
-    <div class="main">
-      <!-- Content -->
-      <section class="content">
-        <div class="welcome-block">
-          <p class="ledger-label">Overview</p>
-          <h1>Dashboard</h1>
-          <p class="subtitle">Here's how things stand today.</p>
-        </div>
+    <!-- Table -->
+    <div class="table-container">
+      <div class="table-head">
+        <h2>Recent users</h2>
+        <p class="ledger-label">{{ users.length }} total</p>
+      </div>
 
-        <!-- Stat cards -->
-        <div class="cards">
-          <div class="card" v-for="stat in stats" :key="stat.label">
-            <p class="ledger-label">{{ stat.label }}</p>
-            <p class="card-value">{{ stat.value }}</p>
-            <div class="card-rule" />
-            <p class="card-delta" :class="stat.trend">{{ stat.change }}</p>
-          </div>
-        </div>
-
-        <!-- Table -->
-        <div class="table-container">
-          <div class="table-head">
-            <h2>Recent users</h2>
-            <p class="ledger-label">{{ users.length }} total</p>
-          </div>
-
-          <table>
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Status</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="u in users" :key="u.email">
-                <td>{{ u.name }}</td>
-                <td class="mono">{{ u.email }}</td>
-                <td>
-                  <span class="status-pill" :class="u.status.toLowerCase()">{{ u.status }}</span>
-                </td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </section>
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>Email</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="u in users" :key="u.email">
+            <td>{{ u.name }}</td>
+            <td class="mono">{{ u.email }}</td>
+            <td>
+              <span class="status-pill" :class="u.status.toLowerCase()">{{ u.status }}</span>
+            </td>
+          </tr>
+        </tbody>
+      </table>
     </div>
   </div>
 </template>
 
 <script setup lang="ts">
-import { useRouter } from 'vue-router'
-import Sidebar from '@/components/Sidebar.vue'
-const router = useRouter()
-
-
-
-
 const stats = [
   { label: 'Total users', value: '150', change: '+12 this week', trend: 'up' },
   { label: 'Total orders', value: '95', change: '+4 this week', trend: 'up' },
@@ -80,108 +59,13 @@ const users = [
   { name: 'Alex', email: 'alex@gmail.com', status: 'Inactive' },
   { name: 'David', email: 'david@gmail.com', status: 'Pending' },
 ]
-
-const handleLogout = () => {
-  localStorage.removeItem('accessToken')
-  localStorage.removeItem('refreshToken')
-  router.push('/login')
-}
 </script>
 
 <style scoped>
 @import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
 
-:root {
-  --ink: #14171c;
-  --paper: #fbfaf6;
-  --surface: #ffffff;
-  --line: #e4e1d8;
-  --forest: #0e5c4a;
-  --forest-dark: #0a4638;
-  --forest-soft: #e7f0ed;
-  --gold: #b8872f;
-  --gold-soft: #f6ecd9;
-  --slate: #6b7280;
-  --danger: #a3372c;
-  --danger-soft: #f6e9e7;
-  --font-display: 'Fraunces', Georgia, serif;
-  --font-body: 'Inter', -apple-system, sans-serif;
-  --font-mono: 'IBM Plex Mono', monospace;
-  --radius: 3px;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-.dashboard {
-  min-height: 100vh;
+.dashboard-view {
   width: 100%;
-  background: var(--paper);
-  font-family: var(--font-body);
-  color: var(--ink);
-}
-
-/* Topbar */
-.topbar {
-  height: 64px;
-  background: var(--ink);
-  color: #f2f0ea;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 32px;
-}
-
-.brand-mark {
-  font-family: var(--font-mono);
-  font-size: 13px;
-  letter-spacing: 0.12em;
-  text-transform: uppercase;
-  color: var(--gold);
-}
-
-.topbar-right {
-  display: flex;
-  align-items: center;
-  gap: 20px;
-}
-
-.welcome {
-  font-size: 14px;
-  color: #d6d3ca;
-}
-
-.logout-btn {
-  font-family: var(--font-body);
-  font-weight: 600;
-  font-size: 13px;
-  padding: 8px 16px;
-  border: 1px solid rgba(255,255,255,0.25);
-  border-radius: var(--radius);
-  background: transparent;
-  color: #f2f0ea;
-  cursor: pointer;
-  transition: 0.2s ease;
-}
-
-.logout-btn:hover {
-  background: rgba(255,255,255,0.08);
-}
-
-/* Layout */
-.main {
-  display: flex;
-  min-height: calc(100vh - 64px);
-}
-
-
-
-/* Content */
-.content {
-  flex: 1;
-  padding: 40px;
-  overflow: auto;
 }
 
 .welcome-block {
@@ -189,23 +73,24 @@ const handleLogout = () => {
 }
 
 .ledger-label {
-  font-family: var(--font-mono);
+  font-family: 'IBM Plex Mono', monospace;
   font-size: 11px;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: var(--slate);
+  color: var(--slate, #6b7280);
   margin: 0 0 6px;
 }
 
 .welcome-block h1 {
-  font-family: var(--font-display);
+  font-family: 'Fraunces', Georgia, serif;
   font-weight: 500;
   font-size: 32px;
   margin: 0 0 6px;
+  color: var(--ink, #14171c);
 }
 
 .subtitle {
-  color: var(--slate);
+  color: var(--slate, #6b7280);
   font-size: 14px;
   margin: 0;
 }
@@ -219,14 +104,14 @@ const handleLogout = () => {
 }
 
 .card {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--line, #e4e1d8);
+  border-radius: var(--radius, 3px);
   padding: 22px;
 }
 
 .card-value {
-  font-family: var(--font-display);
+  font-family: 'Fraunces', Georgia, serif;
   font-size: 30px;
   font-weight: 500;
   margin: 4px 0 14px;
@@ -234,29 +119,29 @@ const handleLogout = () => {
 
 .card-rule {
   height: 1px;
-  background: var(--line);
+  background: var(--line, #e4e1d8);
   margin-bottom: 10px;
 }
 
 .card-delta {
-  font-family: var(--font-mono);
+  font-family: 'IBM Plex Mono', monospace;
   font-size: 12px;
   margin: 0;
 }
 
 .card-delta.up {
-  color: var(--forest);
+  color: var(--forest, #0e5c4a);
 }
 
 .card-delta.down {
-  color: var(--danger);
+  color: var(--danger, #a3372c);
 }
 
 /* Table */
 .table-container {
-  background: var(--surface);
-  border: 1px solid var(--line);
-  border-radius: var(--radius);
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--line, #e4e1d8);
+  border-radius: var(--radius, 3px);
   padding: 28px;
 }
 
@@ -268,10 +153,11 @@ const handleLogout = () => {
 }
 
 .table-head h2 {
-  font-family: var(--font-display);
+  font-family: 'Fraunces', Georgia, serif;
   font-weight: 500;
   font-size: 20px;
   margin: 0;
+  color: var(--ink, #14171c);
 }
 
 table {
@@ -281,26 +167,27 @@ table {
 
 th {
   text-align: left;
-  font-family: var(--font-mono);
+  font-family: 'IBM Plex Mono', monospace;
   font-size: 11px;
   letter-spacing: 0.06em;
   text-transform: uppercase;
-  color: var(--slate);
+  color: var(--slate, #6b7280);
   font-weight: 500;
   padding: 10px 12px;
-  border-bottom: 1.5px solid var(--line);
+  border-bottom: 1.5px solid var(--line, #e4e1d8);
 }
 
 td {
   padding: 14px 12px;
-  border-bottom: 1px solid var(--line);
+  border-bottom: 1px solid var(--line, #e4e1d8);
   font-size: 14px;
+  color: var(--ink, #14171c);
 }
 
 td.mono {
-  font-family: var(--font-mono);
+  font-family: 'IBM Plex Mono', monospace;
   font-size: 13px;
-  color: var(--slate);
+  color: var(--slate, #6b7280);
 }
 
 tr:hover td {
@@ -309,25 +196,25 @@ tr:hover td {
 
 .status-pill {
   display: inline-block;
-  font-family: var(--font-mono);
+  font-family: 'IBM Plex Mono', monospace;
   font-size: 11px;
   padding: 3px 10px;
   border-radius: 999px;
 }
 
 .status-pill.active {
-  background: var(--forest-soft);
-  color: var(--forest-dark);
+  background: var(--forest-soft, #e7f0ed);
+  color: var(--forest-dark, #0a4638);
 }
 
 .status-pill.inactive {
   background: #ece9e2;
-  color: var(--slate);
+  color: var(--slate, #6b7280);
 }
 
 .status-pill.pending {
-  background: var(--gold-soft);
-  color: var(--gold);
+  background: var(--gold-soft, #f6ecd9);
+  color: var(--gold, #b8872f);
 }
 
 @media (max-width: 1000px) {
@@ -337,11 +224,9 @@ tr:hover td {
 }
 
 @media (max-width: 700px) {
-  .sidebar {
-    display: none;
-  }
   .cards {
     grid-template-columns: 1fr;
   }
 }
 </style>
+
