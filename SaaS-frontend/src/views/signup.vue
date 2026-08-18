@@ -85,7 +85,8 @@
             </div>
             <div class="row">
               <label>Confirm password</label>
-              <input class="ledger-input" type="password" v-model="user.confirm_password" placeholder="••••••••" required />
+              <input class="ledger-input" type="password" v-model="user.confirm_password" placeholder="••••••••"
+                required />
             </div>
           </div>
 
@@ -193,7 +194,7 @@ const onSubmit = async () => {
   position: relative;
   background-image:
     linear-gradient(180deg, transparent 0%, transparent 100%),
-    repeating-linear-gradient(180deg, rgba(255,255,255,0.035) 0px, rgba(255,255,255,0.035) 1px, transparent 1px, transparent 64px);
+    repeating-linear-gradient(180deg, rgba(255, 255, 255, 0.035) 0px, rgba(255, 255, 255, 0.035) 1px, transparent 1px, transparent 64px);
 }
 
 .brand-mark {
@@ -226,7 +227,7 @@ const onSubmit = async () => {
   display: flex;
   flex-direction: column;
   gap: 16px;
-  border-top: 1px solid rgba(255,255,255,0.12);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
   padding-top: 28px;
 }
 
@@ -330,6 +331,7 @@ label {
   outline: none;
   transition: border-color 0.2s ease;
 }
+
 .ledger-input:focus {
   border-bottom-color: var(--forest);
 }
@@ -402,12 +404,15 @@ label {
   .auth-shell {
     grid-template-columns: 1fr;
   }
+
   .auth-panel {
     padding: 32px;
   }
+
   .panel-copy h1 {
     font-size: 30px;
   }
+
   .feature-list {
     display: none;
   }
