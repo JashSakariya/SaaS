@@ -34,7 +34,16 @@
       </div>
     </Transition>
 
-    <!-- Top Navigation Header -->
+    <!-- New Project Modal Component -->
+    <ProjectModal
+      :is-open="showNewProjectModal"
+      :client-name="payload.name"
+      :client-id="payload.id"
+      @close="showNewProjectModal = false"
+      @create="handleProjectCreated"
+    />
+
+    <!-- Top Navigation Header (Scrolls naturally) -->
     <div class="nav-header">
       <router-link to="/clients" class="back-link">
         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -50,28 +59,9 @@
       </div>
     </div>
 
-    <!-- Loading State -->
-    <div v-if="isLoading" class="loading-state">
-      <div class="spinner"></div>
-      <p>Loading client details...</p>
-    </div>
+    <!-- Header Profile Card Container -->
+    <div class="header-card-container">
 
-    <!-- Error State -->
-    <div v-else-if="errorMessage" class="error-state">
-      <div class="error-icon-wrapper">
-        <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-          <circle cx="12" cy="12" r="10"></circle>
-          <line x1="12" y1="8" x2="12"></line>
-          <line x1="12" y1="16" x2="12.01" y2="16"></line>
-        </svg>
-      </div>
-      <h3>Failed to load client</h3>
-      <p>{{ errorMessage }}</p>
-      <button class="btn-primary" @click="fetchClientDetails">Retry</button>
-    </div>
-
-    <!-- Main Client Dashboard Layout -->
-    <div v-else class="client-dashboard-content">
       <!-- Hero Profile Header Card -->
       <div class="hero-profile-card">
         <div class="profile-main-info">
@@ -129,7 +119,7 @@
           <button type="button" class="btn-action-outline" @click="openEditDrawer">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
               <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-              <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+              <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
             </svg>
             Edit Profile
           </button>
@@ -171,6 +161,7 @@
           </div>
         </div>
       </div>
+    </div>
 
       <!-- Toast Feedback Popup -->
       <Transition name="fade">
@@ -421,7 +412,6 @@
           </div>
         </div>
       </div>
-    </div>
   </div>
 </template>
 
@@ -430,6 +420,7 @@ import { useRoute, useRouter } from 'vue-router';
 import { onMounted, ref, computed } from 'vue';
 import api from '@/services/ApiService';
 import ClientDrawer from '@/components/ClientDrawer.vue';
+import ProjectModal, { type ProjectFormData } from '@/components/ProjectModal.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -443,6 +434,9 @@ const isDeleting = ref(false);
 const showStatusMenu = ref(false);
 const showMoreMenu = ref(false);
 const toastMessage = ref('');
+
+// New Project Modal State
+const showNewProjectModal = ref(false);
 
 // Current Client Payload
 const payload = ref({
@@ -627,14 +621,17 @@ const addCustomTimelineEvent = () => {
   }
 };
 
-// Add project dynamically
+// Add project modal handler
 const addNewProject = () => {
-  const projName = prompt('Enter project name:');
-  if (projName && projName.trim()) {
+  showNewProjectModal.value = true;
+};
+
+const handleProjectCreated = (data: ProjectFormData) => {
+  if (data.title.trim()) {
     clientProjects.value.push({
-      title: projName.trim(),
-      taskCount: 1,
-      openCount: 1
+      title: data.title.trim(),
+      taskCount: 0,
+      openCount: 0
     });
     showToast('Project created');
   }
@@ -650,7 +647,7 @@ onMounted(() => {
 .client-detail-view {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 8px 0 60px;
+  padding: 0 0 60px;
   font-family: var(--font-body);
   color: var(--ink);
 }
@@ -660,7 +657,12 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
+  margin-bottom: 16px;
+}
+
+/* Header Card Container */
+.header-card-container {
+  margin-bottom: 24px;
 }
 
 .back-link {
@@ -705,7 +707,7 @@ onMounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: 0;
   box-shadow: 0 1px 3px rgba(20, 23, 28, 0.04), 0 4px 12px rgba(20, 23, 28, 0.02);
 }
 
@@ -975,6 +977,12 @@ onMounted(() => {
   align-items: start;
 }
 
+.sidebar-column {
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+
 /* Card Container Base */
 .card {
   background: var(--surface, #ffffff);
@@ -1077,6 +1085,19 @@ onMounted(() => {
 .contact-info {
   flex: 1;
   min-width: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.contact-info .ledger-label {
+  display: block;
+  font-family: 'IBM Plex Mono', monospace;
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--slate, #6b7280);
+  margin: 0 0 3px;
 }
 
 .contact-value-link {
@@ -1096,9 +1117,13 @@ onMounted(() => {
 }
 
 .contact-value-static {
+  display: block;
   font-size: 14px;
   font-weight: 600;
   color: var(--ink);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .contact-value-static.capital {
@@ -1492,9 +1517,20 @@ onMounted(() => {
   .dashboard-body-grid {
     grid-template-columns: 1fr;
   }
+
+  .sidebar-column {
+    position: static;
+    top: auto;
+  }
 }
 
 @media (max-width: 640px) {
+  .sticky-header-container {
+    position: relative;
+    top: auto;
+    z-index: 10;
+  }
+
   .contact-cards-grid {
     grid-template-columns: 1fr;
   }
