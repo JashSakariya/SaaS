@@ -32,8 +32,8 @@ Route.get('/client/:id', 'ClientsController.show')
 
 //projects fetch, store , get, update, delete.
 
-Route.get('/client/:id/projects', 'ProjectsController.index')
-// Route.post('/client/:id/projects', 'ProjectsController.store')
+// Route.get('/client/:id/projects', 'ProjectsController.index')
+Route.post('/client/:id/projects', 'ProjectsController.store')
 // Route.get('/client/:id/projects', 'ProjectsController.show')
 // Route.put('/client/:id/projects', 'ProjectsController.update')
 // Route.delete('/client/:id/projects', 'ProjectsController.destroy')

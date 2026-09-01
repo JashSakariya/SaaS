@@ -626,14 +626,15 @@ const addNewProject = () => {
   showNewProjectModal.value = true;
 };
 
-const handleProjectCreated = (data: ProjectFormData) => {
-  if (data.title.trim()) {
-    clientProjects.value.push({
-      title: data.title.trim(),
-      taskCount: 0,
-      openCount: 0
-    });
+const handleProjectCreated = async (data: ProjectFormData) => {
+  try {
+    const res = await api.post(`/client/${clientId.value}/projects`, data)
+    console.log("project creating response: ", res)
     showToast('Project created');
+  }
+  catch (err) {
+    console.log("project creating error: ", err)
+    showToast('Failed to create project');
   }
 };
 
