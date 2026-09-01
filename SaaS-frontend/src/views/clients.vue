@@ -129,47 +129,18 @@
               </td>
               <td class="action-cell text-right">
                 <div class="action-wrapper">
-                  <button @click="activeClientId = activeClientId === client.id ? null : client.id"
-                    class="btn-action-trigger" type="button">
+                  <button 
+                    @click.stop="toggleDropdown($event, client)"
+                    class="btn-action-trigger" 
+                    :class="{ active: activeClientId === client.id }"
+                    type="button"
+                  >
                     Action
                     <svg class="chevron-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
                       stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                       <polyline points="6 9 12 15 18 9"></polyline>
                     </svg>
                   </button>
-
-                  <!-- Backdrop to close dropdown when clicking outside -->
-                  <div v-if="activeClientId === client.id" class="dropdown-backdrop" @click="activeClientId = null"></div>
-
-                  <!-- Dropdown Menu -->
-                  <div v-if="activeClientId === client.id" class="actions-dropdown">
-                    <router-link :to="`/clients/${client.id}`" class="dropdown-item view-btn">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                        <circle cx="12" cy="12" r="3"></circle>
-                      </svg>
-                      View
-                    </router-link>
-                    <button type="button" @click="editClient(client); activeClientId = null;" class="dropdown-item edit-btn">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                        <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                      </svg>
-                      Edit
-                    </button>
-                    <button @click="deleteClient(client.id); activeClientId = null;" type="button" class="dropdown-item delete-btn">
-                      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                        stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="3 6 5 6 21 6"></polyline>
-                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                        <line x1="10" y1="11" x2="10" y2="17"></line>
-                        <line x1="14" y1="11" x2="14" y2="17"></line>
-                      </svg>
-                      Delete
-                    </button>
-                  </div>
                 </div>
               </td>
             </tr>
@@ -177,11 +148,61 @@
         </table>
       </div>
     </div>
+
+    <!-- Fixed Overlay Dropdown Teleported to Body -->
+    <Teleport to="body">
+      <div v-if="activeClientId !== null" class="dropdown-backdrop" @click="closeDropdown"></div>
+
+      <div 
+        v-if="activeClientId !== null && activeClient" 
+        class="actions-dropdown fixed-overlay" 
+        :style="dropdownStyle"
+      >
+        <router-link 
+          :to="`/clients/${activeClient.id}`" 
+          class="dropdown-item view-btn"
+          @click="closeDropdown"
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          View
+        </router-link>
+        <button 
+          type="button" 
+          @click="editClient(activeClient); closeDropdown();" 
+          class="dropdown-item edit-btn"
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+          Edit
+        </button>
+        <button 
+          type="button" 
+          @click="deleteClient(activeClient.id); closeDropdown();" 
+          class="dropdown-item delete-btn"
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            <line x1="10" y1="11" x2="10" y2="17"></line>
+            <line x1="14" y1="11" x2="14" y2="17"></line>
+          </svg>
+          Delete
+        </button>
+      </div>
+    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
-import { onMounted, ref, computed, watch } from 'vue';
+import { onMounted, onUnmounted, ref, computed, watch } from 'vue';
 import api from '@/services/ApiService';
 import ClientDrawer from '@/components/ClientDrawer.vue';
 
@@ -196,10 +217,74 @@ interface client {
 
 const clients = ref<client[]>([])
 const activeClientId = ref<number | null>(null)
+const activeClient = ref<client | null>(null)
+const activeTriggerEl = ref<HTMLElement | null>(null)
+const dropdownStyle = ref<Record<string, string>>({})
 const selectedClient = ref<client | null>(null)
 const showAddClient = ref(false)
 const isLoading = ref(true)
 const searchQuery = ref('')
+
+const closeDropdown = () => {
+  activeClientId.value = null
+  activeClient.value = null
+  activeTriggerEl.value = null
+}
+
+const updateDropdownPosition = () => {
+  if (!activeTriggerEl.value || activeClientId.value === null) return
+
+  const rect = activeTriggerEl.value.getBoundingClientRect()
+
+  // Close dropdown if trigger button has scrolled out of viewport
+  if (rect.bottom < 0 || rect.top > window.innerHeight) {
+    closeDropdown()
+    return
+  }
+
+  const dropdownHeight = 125
+  const dropdownWidth = 120
+  const spaceBelow = window.innerHeight - rect.bottom
+
+  let topPos: string
+  const leftPos = `${Math.max(10, rect.right - dropdownWidth)}px`
+
+  if (spaceBelow < dropdownHeight && rect.top > dropdownHeight) {
+    topPos = `${rect.top - dropdownHeight - 4}px`
+  } else {
+    topPos = `${rect.bottom + 4}px`
+  }
+
+  dropdownStyle.value = {
+    position: 'fixed',
+    top: topPos,
+    left: leftPos,
+    minWidth: `${dropdownWidth}px`,
+    zIndex: '10000'
+  }
+}
+
+const toggleDropdown = (event: MouseEvent, clientItem: client) => {
+  if (!clientItem || clientItem.id === null) return
+
+  if (activeClientId.value === clientItem.id) {
+    closeDropdown()
+    return
+  }
+
+  const button = event.currentTarget as HTMLElement
+  activeTriggerEl.value = button
+  activeClient.value = clientItem
+  activeClientId.value = clientItem.id
+
+  updateDropdownPosition()
+}
+
+const handleScrollOrResize = () => {
+  if (activeClientId.value !== null) {
+    updateDropdownPosition()
+  }
+}
 
 const filteredClients = computed(() => {
   if (!searchQuery.value.trim()) return clients.value
@@ -266,6 +351,13 @@ watch(activeClientId, (newValue) => {
 
 onMounted(() => {
   fetchClient()
+  window.addEventListener('scroll', handleScrollOrResize, true)
+  window.addEventListener('resize', handleScrollOrResize)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScrollOrResize, true)
+  window.removeEventListener('resize', handleScrollOrResize)
 })
 </script>
 
@@ -538,7 +630,8 @@ onMounted(() => {
   transition: all 0.2s ease;
 }
 
-.btn-action-trigger:hover {
+.btn-action-trigger:hover,
+.btn-action-trigger.active {
   background: #e7f0ed;
   color: #0a4638;
   border-color: #0e5c4a;
@@ -554,29 +647,44 @@ onMounted(() => {
   transform: translateY(1px);
 }
 
+.btn-action-trigger.active .chevron-icon {
+  opacity: 1;
+  transform: rotate(180deg);
+}
+
 .dropdown-backdrop {
   position: fixed;
   top: 0;
   left: 0;
   right: 0;
   bottom: 0;
-  z-index: 99;
+  z-index: 9999;
   background: transparent;
 }
 
-.actions-dropdown {
-  position: absolute;
-  right: 0;
-  top: calc(100% + 4px);
-  z-index: 100;
+.actions-dropdown.fixed-overlay {
+  position: fixed;
+  z-index: 10000;
   background: #ffffff;
   border: 1px solid #e4e1d8;
-  border-radius: 3px;
-  box-shadow: 0 4px 12px rgba(20, 23, 28, 0.08);
+  border-radius: 4px;
+  box-shadow: 0 10px 25px -5px rgba(20, 23, 28, 0.12), 0 8px 10px -6px rgba(20, 23, 28, 0.08);
   padding: 4px 0;
   min-width: 120px;
   display: flex;
   flex-direction: column;
+  animation: dropdownFadeIn 0.15s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@keyframes dropdownFadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.95);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }
 
 .dropdown-item {
