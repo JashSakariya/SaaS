@@ -46,6 +46,8 @@
 </template>
 
 <script setup lang="ts">
+
+
 const stats = [
   { label: 'Total users', value: '150', change: '+12 this week', trend: 'up' },
   { label: 'Total orders', value: '95', change: '+4 this week', trend: 'up' },

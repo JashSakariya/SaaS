@@ -29,9 +29,7 @@ const router = createRouter({
 
     {
       path: '/',
-      name: 'dashboard',
       component: DashboardLayout,
-
 
       children: [
         {
@@ -42,6 +40,7 @@ const router = createRouter({
 
         {
           path: 'dashboard',
+          name: 'dashboard',
           component: Dashboard,
         },
 
@@ -67,17 +66,14 @@ const router = createRouter({
   ]
 })
 
-router.beforeEach((to, from, next) => {
+router.beforeEach((to) => {
   const isAuthenticated =
     localStorage.getItem('accessToken') !== null ||
     localStorage.getItem('refreshToken') !== null;
 
   if (to.meta.requiresAuth && !isAuthenticated) {
     // If route requires auth and user is not logged in, redirect to login
-    next('/login')
-  } else {
-    // Otherwise, let them proceed
-    next()
+    return '/login'
   }
 })
 
