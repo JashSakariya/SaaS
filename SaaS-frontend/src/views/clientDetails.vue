@@ -351,16 +351,20 @@
                       </div>
                     </router-link>
                     <div class="project-right">
-                      <router-link :to="`/clients/${clientId}/projects/${project.id}`" class="btn-chevron" title="Open Project Details">
-                        Open Project →
-                      </router-link>
-                      <button type="button" class="btn-chevron" title="Update Project" 
-                      @click="updateProject(project.id)">
-                        Edit
-                      </button>
-                      <button type="button" class="btn-chevron danger-text" title="Delete Project" @click="deleteProject(project.id)">
-                        Delete
-                      </button>
+                      <div class="action-wrapper">
+                        <button 
+                          @click.stop="toggleProjectDropdown($event, project)"
+                          class="btn-action-trigger" 
+                          :class="{ active: activeProjectDropdownId === project.id }"
+                          type="button"
+                        >
+                          Action
+                          <svg class="chevron-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                          </svg>
+                        </button>
+                      </div>
                     </div>
                   </div>
 
@@ -520,12 +524,62 @@
           </div>
         </div>
       </div>
+
+    <!-- Fixed Overlay Project Dropdown Teleported to Body -->
+    <Teleport to="body">
+      <div v-if="activeProjectDropdownId !== null" class="dropdown-backdrop" @click="closeProjectDropdown"></div>
+
+      <div 
+        v-if="activeProjectDropdownId !== null && activeDropdownProject" 
+        class="actions-dropdown fixed-overlay" 
+        :style="projectDropdownStyle"
+      >
+        <router-link 
+          :to="`/clients/${clientId}/projects/${activeDropdownProject.id}`" 
+          class="dropdown-item view-btn"
+          @click="closeProjectDropdown"
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          View
+        </router-link>
+        <button 
+          type="button" 
+          @click="updateProject(activeDropdownProject.id); closeProjectDropdown();" 
+          class="dropdown-item edit-btn"
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+            <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+          </svg>
+          Edit
+        </button>
+        <button 
+          type="button" 
+          @click="deleteProject(activeDropdownProject.id); closeProjectDropdown();" 
+          class="dropdown-item delete-btn"
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="3 6 5 6 21 6"></polyline>
+            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+            <line x1="10" y1="11" x2="10" y2="17"></line>
+            <line x1="14" y1="11" x2="14" y2="17"></line>
+          </svg>
+          Delete
+        </button>
+      </div>
+    </Teleport>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router';
-import { onMounted, ref, computed, watch} from 'vue';
+import { onMounted, onUnmounted, ref, computed, watch } from 'vue';
 import api from '@/services/ApiService';
 import ClientDrawer from '@/components/ClientDrawer.vue';
 import ProjectModal, { type ProjectFormData } from '@/components/ProjectModal.vue';
@@ -545,6 +599,64 @@ const showStatusMenu = ref(false);
 const showMoreMenu = ref(false);
 const toastMessage = ref('');
 const selectedProject = ref(null);
+
+// Project Action Dropdown State
+const activeProjectDropdownId = ref<number | null>(null);
+const activeDropdownProject = ref<any>(null);
+const activeProjectTriggerEl = ref<HTMLElement | null>(null);
+const projectDropdownStyle = ref<Record<string, string>>({});
+
+const closeProjectDropdown = () => {
+  activeProjectDropdownId.value = null;
+  activeDropdownProject.value = null;
+  activeProjectTriggerEl.value = null;
+};
+
+const updateProjectDropdownPosition = () => {
+  if (!activeProjectTriggerEl.value) return;
+  const rect = activeProjectTriggerEl.value.getBoundingClientRect();
+  if (rect.bottom < 0 || rect.top > window.innerHeight) {
+    closeProjectDropdown();
+    return;
+  }
+  const dropdownHeight = 125;
+  const dropdownWidth = 120;
+  const spaceBelow = window.innerHeight - rect.bottom;
+  let topPos: string;
+  const leftPos = `${Math.max(10, rect.right - dropdownWidth)}px`;
+
+  if (spaceBelow < dropdownHeight && rect.top > dropdownHeight) {
+    topPos = `${rect.top - dropdownHeight - 4}px`;
+  } else {
+    topPos = `${rect.bottom + 4}px`;
+  }
+
+  projectDropdownStyle.value = {
+    position: 'fixed',
+    top: topPos,
+    left: leftPos,
+    minWidth: `${dropdownWidth}px`,
+    zIndex: '10000'
+  };
+};
+
+const toggleProjectDropdown = (event: MouseEvent, project: any) => {
+  if (!project || project.id === null) return;
+  if (activeProjectDropdownId.value === project.id) {
+    closeProjectDropdown();
+    return;
+  }
+  activeProjectTriggerEl.value = event.currentTarget as HTMLElement;
+  activeDropdownProject.value = project;
+  activeProjectDropdownId.value = project.id;
+  updateProjectDropdownPosition();
+};
+
+const handleScrollOrResize = () => {
+  if (activeProjectDropdownId.value !== null) {
+    updateProjectDropdownPosition();
+  }
+};
 
 // New Project Modal State
 const showNewProjectModal = ref(false);
@@ -906,6 +1018,13 @@ watch(
 
 onMounted(() => {
   fetchClientDetails();
+  window.addEventListener('scroll', handleScrollOrResize, true);
+  window.addEventListener('resize', handleScrollOrResize);
+});
+
+onUnmounted(() => {
+  window.removeEventListener('scroll', handleScrollOrResize, true);
+  window.removeEventListener('resize', handleScrollOrResize);
 });
 </script>
 

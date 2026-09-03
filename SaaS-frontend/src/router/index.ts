@@ -9,6 +9,7 @@ import Dashboard from '@/views/Home.vue'
 import ClientsLayout from '@/layouts/ClientsLayout.vue'
 import ClientDetails from '@/views/clientDetails.vue'
 import ProjectDetails from '@/views/projectDetails.vue'
+import TaskDetails from '@/views/taskDetails.vue'
 
 
 const router = createRouter({
@@ -61,6 +62,10 @@ const router = createRouter({
             {
               path: ':id/projects/:pid',
               component: ProjectDetails,
+            },
+            {
+              path: ':id/projects/:pid/tasks/:tid',
+              component: TaskDetails,
             },
 
 
