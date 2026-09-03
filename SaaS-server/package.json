@@ -2,6 +2,9 @@
   "name": "SaaS-server",
   "version": "1.0.0",
   "private": true,
+  "engines": {
+    "node": "20.x"
+  },
   "scripts": {
     "dev": "node ace serve --watch",
     "build": "node ace build --production",
@@ -13,6 +16,7 @@
     "@japa/preset-adonis": "^1.2.0",
     "@japa/runner": "^2.5.1",
     "@types/jsonwebtoken": "^9.0.10",
+   "@types/node": "16.18.101",
     "@types/proxy-addr": "^2.0.3",
     "@types/source-map-support": "^0.5.10",
     "adonis-preset-ts": "^2.1.0",

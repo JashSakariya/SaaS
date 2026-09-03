@@ -59,7 +59,7 @@ export default class ClientsController {
         })
     }
 
-    public async destroy({ params, request, response }: HttpContextContract) {
+    public async destroy({ params, response }: HttpContextContract) {
         console.log("getting id here start")
         const id = params.id;
         console.log('delete id is : ', id)
