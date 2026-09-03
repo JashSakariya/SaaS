@@ -438,7 +438,6 @@ onUnmounted(() => {
   color: var(--ink, #14171c);
 }
 
-/* Actions Cell & Dropdown Styles */
 .action-cell {
   position: relative;
   width: 120px;
@@ -447,89 +446,5 @@ onUnmounted(() => {
 .action-wrapper {
   position: relative;
   display: inline-block;
-}
-
-.btn-action-trigger {
-  font-family: var(--font-body, 'Inter', sans-serif);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--slate, #6b7280);
-  background: transparent;
-  border: 1px solid var(--line, #e4e1d8);
-  border-radius: 4px;
-  padding: 6px 12px;
-  cursor: pointer;
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  transition: all var(--transition-fast, 0.15s ease);
-}
-
-.btn-action-trigger:hover,
-.btn-action-trigger.active {
-  background: var(--forest-soft, #e7f0ed);
-  color: var(--forest-dark, #0a4638);
-  border-color: var(--forest, #0e5c4a);
-}
-
-.chevron-icon {
-  transition: transform 0.2s ease;
-  opacity: 0.7;
-}
-
-.actions-dropdown.fixed-overlay {
-  position: fixed;
-  z-index: 10000;
-  background: #ffffff;
-  border: 1px solid var(--line, #e4e1d8);
-  border-radius: 6px;
-  box-shadow: 0 10px 25px -5px rgba(20, 23, 28, 0.12), 0 8px 10px -6px rgba(20, 23, 28, 0.08);
-  padding: 4px 0;
-  min-width: 120px;
-  display: flex;
-  flex-direction: column;
-}
-
-.dropdown-item {
-  font-family: var(--font-body, 'Inter', sans-serif);
-  font-size: 13px;
-  font-weight: 500;
-  color: var(--ink, #14171c);
-  background: transparent;
-  border: none;
-  padding: 8px 14px;
-  width: 100%;
-  text-align: left;
-  cursor: pointer;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  text-decoration: none;
-  transition: all 0.15s ease;
-  box-sizing: border-box;
-}
-
-.dropdown-item svg {
-  opacity: 0.6;
-  transition: opacity 0.15s ease;
-}
-
-.dropdown-item:hover svg {
-  opacity: 1;
-}
-
-.dropdown-item.view-btn:hover {
-  background: var(--forest-soft, #e7f0ed);
-  color: var(--forest-dark, #0a4638);
-}
-
-.dropdown-item.edit-btn:hover {
-  background: var(--gold-soft, #f6ecd9);
-  color: var(--gold, #b8872f);
-}
-
-.dropdown-item.delete-btn:hover {
-  background: var(--danger-soft, #f6e9e7);
-  color: var(--danger, #a3372c);
 }
 </style>
