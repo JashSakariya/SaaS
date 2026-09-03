@@ -8,6 +8,7 @@ import DashboardLayout from '@/layouts/DashboardLayout.vue'
 import Dashboard from '@/views/Home.vue'
 import ClientsLayout from '@/layouts/ClientsLayout.vue'
 import ClientDetails from '@/views/clientDetails.vue'
+import ProjectDetails from '@/views/projectDetails.vue'
 
 
 const router = createRouter({
@@ -56,6 +57,10 @@ const router = createRouter({
             {
               path: ':id',
               component: ClientDetails,
+            },
+            {
+              path: ':id/projects/:pid',
+              component: ProjectDetails,
             },
 
 

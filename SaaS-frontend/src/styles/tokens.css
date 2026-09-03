@@ -1,0 +1,52 @@
+/* ============================================================
+   Design Tokens — "Ledger" Theme
+   ============================================================ */
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600;9..144,700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
+
+:root {
+  /* Colors */
+  --ink: #14171c;
+  --ink-soft: #2b2f36;
+  --paper: #fbfaf6;
+  --surface: #ffffff;
+  --line: #e4e1d8;
+  --line-strong: #d8d4c8;
+  
+  /* Primary Brand: Forest Green */
+  --forest: #0e5c4a;
+  --forest-dark: #0a4638;
+  --forest-soft: #e7f0ed;
+  
+  /* Accent: Gold / Amber */
+  --gold: #b8872f;
+  --gold-soft: #f6ecd9;
+  
+  /* Neutral Slate */
+  --slate: #6b7280;
+  --slate-soft: #f1efe9;
+  
+  /* Danger / Errors */
+  --danger: #a3372c;
+  --danger-dark: #882b21;
+  --danger-soft: #f6e9e7;
+  
+  /* Informative & Blue */
+  --info: #0369a1;
+  --info-soft: #e0f2fe;
+
+  /* Typography */
+  --font-display: 'Fraunces', Georgia, serif;
+  --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'IBM Plex Mono', 'SFMono-Regular', Consolas, monospace;
+
+  /* Layout & Elevations */
+  --radius-sm: 4px;
+  --radius-md: 6px;
+  --radius-lg: 10px;
+  --radius-xl: 12px;
+  --shadow-sm: 0 1px 3px rgba(20, 23, 28, 0.04), 0 4px 12px rgba(20, 23, 28, 0.02);
+  --shadow-md: 0 4px 16px rgba(20, 23, 28, 0.08);
+  --shadow-lg: 0 20px 40px rgba(20, 23, 28, 0.16);
+  --transition-fast: 0.15s ease;
+  --transition-normal: 0.2s ease;
+}

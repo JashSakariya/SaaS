@@ -46,6 +46,19 @@
       :mode= "modelMode"
     />
 
+    <!-- New/Edit Task Modal Component -->
+    <TaskModal
+      :is-open="showTaskModal"
+      :project-name="activeTaskProject?.title"
+      :project-id="activeTaskProject?.id"
+      :client-id="payload.id"
+      :mode="taskModalMode"
+      :task="selectedTask"
+      @close="showTaskModal = false"
+      @create="handleTaskCreated"
+      @update="handleTaskUpdated"
+    />
+
     <!-- Top Navigation Header (Scrolls naturally) -->
     <div class="nav-header">
       <router-link to="/clients" class="back-link">
@@ -316,26 +329,119 @@
             </div>
             <div class="card-body padding-off">
               <div class="projects-container">
-                <div v-for="(project, index) in clientProjects" :key="index" class="project-row-item">
-                  <div class="project-left">
-                    <div class="project-icon">
-                      <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
-                      </svg>
-                    </div>
-                    <div>
-                      <h4 class="project-name">{{ project.title }}</h4>
-                      <span class="project-subtitle">{{ project.status }}</span>
+                <div v-if="clientProjects.length === 0" class="empty-projects-state">
+                  <p>No projects found. Click "+ New Project" to add one.</p>
+                </div>
+                <div v-for="(project, index) in clientProjects" :key="index" class="project-block-item">
+                  <div class="project-row-item">
+                    <router-link :to="`/clients/${clientId}/projects/${project.id}`" class="project-left-link">
+                      <div class="project-icon">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                          <polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline>
+                        </svg>
+                      </div>
+                      <div>
+                        <div class="project-title-line">
+                          <h4 class="project-name">{{ project.title }}</h4>
+                          <span class="project-status-pill" :class="project.status">{{ project.status }}</span>
+                        </div>
+                        <span class="project-subtitle">
+                          {{ (project.due_date || project.dueDate) ? 'Due ' + (project.due_date || project.dueDate).split('T')[0] : 'No due date' }}
+                        </span>
+                      </div>
+                    </router-link>
+                    <div class="project-right">
+                      <router-link :to="`/clients/${clientId}/projects/${project.id}`" class="btn-chevron" title="Open Project Details">
+                        Open Project →
+                      </router-link>
+                      <button type="button" class="btn-chevron" title="Update Project" 
+                      @click="updateProject(project.id)">
+                        Edit
+                      </button>
+                      <button type="button" class="btn-chevron danger-text" title="Delete Project" @click="deleteProject(project.id)">
+                        Delete
+                      </button>
                     </div>
                   </div>
-                  <div class="project-right">
-                    <button type="button" class="btn-chevron" title="Update Project" 
-                    @click="updateProject(project.id)">
-                      Edit
-                    </button>
-                    <button type="button" class="btn-chevron" title="Delete Project" @click="deleteProject(project.id)">
-                      Delete
-                    </button>
+
+                  <!-- Nested Tasks Drawer / Expandable List -->
+                  <div v-if="expandedProjects[project.id]" class="nested-tasks-container">
+                    <div class="nested-tasks-header">
+                      <div class="nested-tasks-title">
+                        <span class="ledger-label">Project Tasks</span>
+                      </div>
+                      <button type="button" class="btn-add-task" @click="openCreateTaskModal(project)">
+                        <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                          <line x1="12" y1="5" x2="12" y2="19"></line>
+                          <line x1="5" y1="12" x2="19" y2="12"></line>
+                        </svg>
+                        Add Task
+                      </button>
+                    </div>
+
+                    <div v-if="loadingTasksMap[project.id]" class="tasks-loading-state">
+                      Loading tasks...
+                    </div>
+
+                    <div v-else-if="!projectTasksMap[project.id] || projectTasksMap[project.id]?.length === 0" class="tasks-empty-state">
+                      <span>No tasks created yet for this project.</span>
+                    </div>
+
+                    <div v-else class="tasks-list">
+                      <div 
+                        v-for="task in projectTasksMap[project.id]" 
+                        :key="task.id" 
+                        class="task-item-row"
+                        :class="{ completed: task.status === 'completed' }"
+                      >
+                        <div class="task-item-left">
+                          <button 
+                            type="button" 
+                            class="task-check-btn" 
+                            :class="task.status"
+                            @click="toggleTaskStatus(project, task)"
+                            :title="task.status === 'completed' ? 'Mark incomplete' : 'Mark completed'"
+                          >
+                            <svg v-if="task.status === 'completed'" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3">
+                              <polyline points="20 6 9 17 4 12"></polyline>
+                            </svg>
+                          </button>
+                          <div class="task-title-wrap">
+                            <span class="task-title-text" :class="{ struck: task.status === 'completed' }">
+                              {{ task.title }}
+                            </span>
+                            <div class="task-meta-tags">
+                              <span class="task-status-badge" :class="task.status">
+                                {{ task.status.replace('_', ' ') }}
+                              </span>
+                              <span v-if="task.assignee" class="task-assignee-tag">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                                  <circle cx="12" cy="7" r="4"></circle>
+                                </svg>
+                                {{ task.assignee }}
+                              </span>
+                              <span v-if="task.due_date || task.dueDate" class="task-due-tag">
+                                <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                  <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                                  <line x1="16" y1="2" x2="16" y2="6"></line>
+                                  <line x1="8" y1="2" x2="8" y2="6"></line>
+                                </svg>
+                                {{ (task.due_date || task.dueDate).split('T')[0] }}
+                              </span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="task-item-actions">
+                          <button type="button" class="btn-task-action" @click="openEditTaskModal(project, task)" title="Edit Task">
+                            Edit
+                          </button>
+                          <button type="button" class="btn-task-action danger" @click="deleteTask(project, task.id)" title="Delete Task">
+                            Delete
+                          </button>
+                        </div>
+                      </div>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -423,6 +529,7 @@ import { onMounted, ref, computed, watch} from 'vue';
 import api from '@/services/ApiService';
 import ClientDrawer from '@/components/ClientDrawer.vue';
 import ProjectModal, { type ProjectFormData } from '@/components/ProjectModal.vue';
+import TaskModal, { type TaskFormData } from '@/components/TaskModal.vue';
 
 const route = useRoute();
 const router = useRouter();
@@ -441,6 +548,15 @@ const selectedProject = ref(null);
 
 // New Project Modal State
 const showNewProjectModal = ref(false);
+
+// Task Modal and Projects State
+const showTaskModal = ref(false);
+const taskModalMode = ref<'create' | 'edit'>('create');
+const activeTaskProject = ref<any>(null);
+const selectedTask = ref<any>(null);
+const expandedProjects = ref<Record<number, boolean>>({});
+const projectTasksMap = ref<Record<number, any[]>>({});
+const loadingTasksMap = ref<Record<number, boolean>>({});
 
 // Current Client Payload
 const payload = ref({
@@ -696,6 +812,87 @@ const deleteProject = async(id:number)=>{
     showToast('Failed to delete project');
   }
 }
+
+// ----------------- Tasks Handlers -----------------
+const toggleProjectTasks = async (project: any) => {
+  const current = !!expandedProjects.value[project.id];
+  expandedProjects.value[project.id] = !current;
+  if (!current && !projectTasksMap.value[project.id]) {
+    await fetchProjectTasks(project.id);
+  }
+};
+
+const fetchProjectTasks = async (projectId: number) => {
+  loadingTasksMap.value[projectId] = true;
+  try {
+    const res = await api.get(`/client/${clientId.value}/projects/${projectId}/tasks`);
+    projectTasksMap.value[projectId] = res.data?.data || [];
+  } catch (err) {
+    console.error('Fetch tasks error:', err);
+  } finally {
+    loadingTasksMap.value[projectId] = false;
+  }
+};
+
+const openCreateTaskModal = (project: any) => {
+  activeTaskProject.value = project;
+  selectedTask.value = null;
+  taskModalMode.value = 'create';
+  showTaskModal.value = true;
+};
+
+const openEditTaskModal = (project: any, task: any) => {
+  activeTaskProject.value = project;
+  selectedTask.value = task;
+  taskModalMode.value = 'edit';
+  showTaskModal.value = true;
+};
+
+const handleTaskCreated = async (data: TaskFormData) => {
+  if (!activeTaskProject.value) return;
+  try {
+    await api.post(`/client/${clientId.value}/projects/${activeTaskProject.value.id}/tasks`, data);
+    showToast('Task created successfully');
+    fetchProjectTasks(activeTaskProject.value.id);
+  } catch (err) {
+    console.error('Task create error:', err);
+    showToast('Failed to create task');
+  }
+};
+
+const handleTaskUpdated = async (data: any) => {
+  if (!activeTaskProject.value) return;
+  try {
+    await api.put(`/client/${clientId.value}/projects/${activeTaskProject.value.id}/tasks/${data.id}`, data);
+    showToast('Task updated successfully');
+    fetchProjectTasks(activeTaskProject.value.id);
+  } catch (err) {
+    console.error('Task update error:', err);
+    showToast('Failed to update task');
+  }
+};
+
+const deleteTask = async (project: any, taskId: number) => {
+  try {
+    await api.delete(`/client/${clientId.value}/projects/${project.id}/tasks/${taskId}`);
+    showToast('Task deleted successfully');
+    fetchProjectTasks(project.id);
+  } catch (err) {
+    console.error('Task delete error:', err);
+    showToast('Failed to delete task');
+  }
+};
+
+const toggleTaskStatus = async (project: any, task: any) => {
+  const newStatus = task.status === 'completed' ? 'todo' : 'completed';
+  try {
+    await api.put(`/client/${clientId.value}/projects/${project.id}/tasks/${task.id}`, { status: newStatus });
+    task.status = newStatus;
+    showToast(`Task marked as ${newStatus === 'completed' ? 'Completed' : 'To Do'}`);
+  } catch (err) {
+    console.error('Toggle task status error:', err);
+  }
+};
 
 watch(
   () => route.params.id,
@@ -1295,10 +1492,18 @@ onMounted(() => {
   background: #fbfaf6;
 }
 
-.project-left {
+.project-left,
+.project-left-link {
   display: flex;
   align-items: center;
   gap: 12px;
+  text-decoration: none;
+  color: inherit;
+  flex: 1;
+}
+
+.project-left-link:hover .project-name {
+  color: var(--forest);
 }
 
 .project-icon {
@@ -1339,12 +1544,302 @@ onMounted(() => {
   border-radius: 4px;
 }
 
+.project-block-item {
+  border-bottom: 1px solid var(--line);
+}
+
+.project-block-item:last-child {
+  border-bottom: none;
+}
+
+.project-title-line {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.project-status-pill {
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 2px 7px;
+  border-radius: 4px;
+  font-weight: 600;
+  background: #f1efe9;
+  color: var(--slate, #6b7280);
+}
+
+.project-status-pill.active {
+  background: var(--forest-soft, #e7f0ed);
+  color: var(--forest, #0e5c4a);
+}
+
+.project-status-pill.completed {
+  background: #eef2ff;
+  color: #4338ca;
+}
+
+.project-status-pill.on_hold {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.btn-task-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--paper, #fbfaf6);
+  border: 1px solid var(--line, #e4e1d8);
+  color: var(--ink-soft, #2b2f36);
+  padding: 5px 10px;
+  border-radius: 5px;
+  font-size: 12px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-task-toggle:hover,
+.btn-task-toggle.active {
+  background: #f4f2ec;
+  border-color: #d8d4c8;
+}
+
+.tasks-count-pill {
+  background: var(--forest, #0e5c4a);
+  color: #ffffff;
+  font-size: 10px;
+  font-weight: 600;
+  padding: 1px 6px;
+  border-radius: 10px;
+  min-width: 16px;
+  text-align: center;
+}
+
+.chevron-rot {
+  transition: transform 0.2s ease;
+}
+
+.chevron-rot.open {
+  transform: rotate(180deg);
+}
+
 .btn-chevron {
   background: transparent;
   border: none;
   color: var(--slate);
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
-  padding: 4px;
+  padding: 4px 8px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.btn-chevron:hover {
+  color: var(--ink);
+  background: #f4f2ec;
+}
+
+.btn-chevron.danger-text:hover {
+  color: var(--danger, #a3372c);
+  background: var(--danger-soft, #f6e9e7);
+}
+
+/* Nested Tasks Container */
+.nested-tasks-container {
+  background: #faf9f5;
+  border-top: 1px dashed var(--line, #e4e1d8);
+  padding: 14px 20px 18px 48px;
+}
+
+.nested-tasks-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 12px;
+}
+
+.btn-add-task {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  background: transparent;
+  border: 1px dashed var(--forest, #0e5c4a);
+  color: var(--forest, #0e5c4a);
+  font-size: 11px;
+  font-weight: 600;
+  padding: 4px 10px;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: all 0.15s ease;
+}
+
+.btn-add-task:hover {
+  background: var(--forest-soft, #e7f0ed);
+}
+
+.tasks-loading-state,
+.tasks-empty-state {
+  font-size: 12px;
+  color: var(--slate, #6b7280);
+  font-style: italic;
+  padding: 8px 0;
+}
+
+.tasks-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.task-item-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--line, #e4e1d8);
+  border-radius: 6px;
+  padding: 10px 14px;
+  transition: all 0.15s ease;
+}
+
+.task-item-row:hover {
+  border-color: #d1cdbf;
+  box-shadow: 0 1px 4px rgba(20, 23, 28, 0.04);
+}
+
+.task-item-row.completed {
+  opacity: 0.75;
+  background: #fdfdfc;
+}
+
+.task-item-left {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex: 1;
+  min-width: 0;
+}
+
+.task-check-btn {
+  width: 18px;
+  height: 18px;
+  border-radius: 4px;
+  border: 1.5px solid #b4b2a9;
+  background: transparent;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+  color: #ffffff;
+  transition: all 0.15s ease;
+  flex-shrink: 0;
+}
+
+.task-check-btn:hover {
+  border-color: var(--forest, #0e5c4a);
+}
+
+.task-check-btn.completed {
+  background: var(--forest, #0e5c4a);
+  border-color: var(--forest, #0e5c4a);
+}
+
+.task-title-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 3px;
+  min-width: 0;
+}
+
+.task-title-text {
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ink, #14171c);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.task-title-text.struck {
+  text-decoration: line-through;
+  color: var(--slate, #6b7280);
+}
+
+.task-meta-tags {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.task-status-badge {
+  font-family: var(--font-mono, monospace);
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-weight: 600;
+}
+
+.task-status-badge.todo {
+  background: #f1efe9;
+  color: var(--slate, #6b7280);
+}
+
+.task-status-badge.in_progress {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.task-status-badge.completed {
+  background: var(--forest-soft, #e7f0ed);
+  color: var(--forest, #0e5c4a);
+}
+
+.task-status-badge.blocked {
+  background: var(--danger-soft, #f6e9e7);
+  color: var(--danger, #a3372c);
+}
+
+.task-assignee-tag,
+.task-due-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 11px;
+  color: var(--slate, #6b7280);
+}
+
+.task-item-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-task-action {
+  background: transparent;
+  border: none;
+  font-size: 12px;
+  color: var(--slate, #6b7280);
+  cursor: pointer;
+  padding: 3px 6px;
+  border-radius: 4px;
+  transition: all 0.15s ease;
+}
+
+.btn-task-action:hover {
+  color: var(--ink, #14171c);
+  background: #f4f2ec;
+}
+
+.btn-task-action.danger:hover {
+  color: var(--danger, #a3372c);
+  background: var(--danger-soft, #f6e9e7);
 }
 
 /* Timeline Stream */

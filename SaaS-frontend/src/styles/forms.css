@@ -1,0 +1,130 @@
+/* ============================================================
+   Form Layouts, Inputs, Textareas, and Selects
+   ============================================================ */
+
+.form-group,
+.project-form-group,
+.task-form-group {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.form-label,
+.project-form-label,
+.task-form-label {
+  font-family: var(--font-mono, 'IBM Plex Mono', monospace);
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--slate, #6b7280);
+}
+
+.form-row,
+.project-form-row,
+.task-form-row {
+  display: flex;
+  gap: 16px;
+}
+
+.form-group.col,
+.project-form-group.col,
+.task-form-group.col {
+  flex: 1;
+}
+
+/* Base Form Controls */
+.form-input,
+.ledger-input,
+.form-textarea,
+.form-select,
+.project-form-input,
+.project-form-textarea,
+.project-form-select,
+.task-form-input,
+.task-form-select {
+  width: 100%;
+  background: var(--paper, #fbfaf6);
+  border: 1px solid var(--line, #e4e1d8);
+  border-radius: var(--radius-md, 6px);
+  padding: 10px 14px;
+  font-size: 14px;
+  color: var(--ink, #14171c);
+  outline: none;
+  font-family: var(--font-body, system-ui, -apple-system, sans-serif);
+  transition: border-color var(--transition-fast), box-shadow var(--transition-fast), background var(--transition-fast);
+  box-sizing: border-box;
+}
+
+.form-input::placeholder,
+.form-textarea::placeholder,
+.project-form-input::placeholder,
+.project-form-textarea::placeholder,
+.task-form-input::placeholder {
+  color: #b4b2a9;
+}
+
+.form-input:focus,
+.form-textarea:focus,
+.form-select:focus,
+.project-form-input:focus,
+.project-form-textarea:focus,
+.project-form-select:focus,
+.task-form-input:focus,
+.task-form-select:focus {
+  border-color: var(--forest, #0e5c4a);
+  background: #ffffff;
+  box-shadow: 0 0 0 3px var(--forest-soft, #e7f0ed);
+}
+
+.form-textarea,
+.project-form-textarea {
+  resize: vertical;
+  min-height: 100px;
+  line-height: 1.5;
+}
+
+/* Date & Select Input Wrappers */
+.date-input-wrapper,
+.select-input-wrapper {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.date-input-wrapper .calendar-icon {
+  position: absolute;
+  right: 14px;
+  color: var(--slate, #6b7280);
+  pointer-events: none;
+}
+
+.select-input-wrapper .chevron-icon {
+  position: absolute;
+  right: 14px;
+  color: var(--slate, #6b7280);
+  pointer-events: none;
+}
+
+.form-select,
+.project-form-select,
+.task-form-select {
+  appearance: none;
+  -webkit-appearance: none;
+  -moz-appearance: none;
+  padding-right: 36px;
+  cursor: pointer;
+}
+
+.form-select option,
+.project-form-select option,
+.task-form-select option {
+  background: #ffffff;
+  color: var(--ink, #14171c);
+}
+
+.date-input {
+  color-scheme: light;
+  padding-right: 36px;
+}

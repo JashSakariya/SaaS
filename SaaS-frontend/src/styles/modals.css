@@ -1,0 +1,130 @@
+/* ============================================================
+   Modals & Overlay Dialogs
+   ============================================================ */
+
+.modal-backdrop,
+.project-modal-backdrop,
+.task-modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(20, 23, 28, 0.45);
+  backdrop-filter: blur(3px);
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-card,
+.project-modal-card,
+.task-modal-card {
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--line, #e4e1d8);
+  border-radius: var(--radius-xl, 12px);
+  width: 500px;
+  max-width: 100%;
+  padding: 28px;
+  box-shadow: var(--shadow-lg);
+  color: var(--ink, #14171c);
+  font-family: var(--font-body, system-ui, -apple-system, sans-serif);
+}
+
+.modal-header,
+.project-modal-header,
+.task-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 24px;
+}
+
+.modal-title,
+.project-modal-title,
+.task-modal-title {
+  font-family: var(--font-display, 'Fraunces', Georgia, serif);
+  font-size: 22px;
+  font-weight: 500;
+  color: var(--ink, #14171c);
+  margin: 0;
+}
+
+.modal-close,
+.project-modal-close,
+.task-modal-close {
+  background: transparent;
+  border: none;
+  color: var(--slate, #6b7280);
+  cursor: pointer;
+  padding: 6px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--radius-md, 6px);
+  transition: color var(--transition-fast), background var(--transition-fast);
+}
+
+.modal-close:hover,
+.project-modal-close:hover,
+.task-modal-close:hover {
+  color: var(--ink, #14171c);
+  background: #f4f2ec;
+}
+
+.modal-body,
+.project-modal-body,
+.task-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.modal-footer,
+.project-modal-footer,
+.task-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-top: 8px;
+  padding-top: 12px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.modal-actions,
+.project-modal-actions,
+.task-modal-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.project-linked-client,
+.task-linked-context {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 13px;
+  color: var(--slate, #6b7280);
+  font-family: var(--font-body);
+}
+
+/* Confirmation modal small size */
+.modal-card.sm {
+  width: 440px;
+  padding: 24px;
+}
+
+.danger-icon-badge {
+  width: 36px;
+  height: 36px;
+  border-radius: 8px;
+  background: var(--danger-soft, #f6e9e7);
+  color: var(--danger, #a3372c);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}

@@ -1,0 +1,153 @@
+/* ============================================================
+   Buttons & Action Components
+   ============================================================ */
+
+/* Primary Button */
+.btn-primary,
+.btn-theme-primary {
+  font-family: var(--font-body);
+  background: var(--forest, #0e5c4a);
+  border: none;
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: var(--radius-md, 6px);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast);
+  text-decoration: none;
+}
+
+.btn-primary:hover,
+.btn-theme-primary:hover {
+  background: var(--forest-dark, #0a4638);
+  color: #ffffff;
+}
+
+/* Secondary Button */
+.btn-secondary,
+.btn-theme-secondary {
+  font-family: var(--font-body);
+  background: #ffffff;
+  border: 1px solid var(--line, #e4e1d8);
+  color: var(--slate, #6b7280);
+  padding: 10px 20px;
+  border-radius: var(--radius-md, 6px);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.btn-secondary:hover,
+.btn-theme-secondary:hover {
+  background: #f4f2ec;
+  color: var(--ink, #14171c);
+  border-color: var(--line-strong, #d8d4c8);
+}
+
+/* Danger Button */
+.btn-danger {
+  font-family: var(--font-body);
+  background: var(--danger, #a3372c);
+  border: none;
+  color: #ffffff;
+  padding: 10px 20px;
+  border-radius: var(--radius-md, 6px);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: background var(--transition-fast);
+}
+
+.btn-danger:hover {
+  background: var(--danger-dark, #882b21);
+}
+
+.btn-danger:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+/* Outline Action Button */
+.btn-action-outline {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 14px;
+  border-radius: var(--radius-md, 6px);
+  border: 1px solid var(--line, #e4e1d8);
+  background: #ffffff;
+  color: var(--ink, #14171c);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.btn-action-outline:hover {
+  background: #f4f2ec;
+}
+
+.btn-action-outline.danger:hover {
+  background: var(--danger-soft, #f6e9e7);
+  color: var(--danger, #a3372c);
+  border-color: #f1c7c2;
+}
+
+/* Text Action Link/Button */
+.btn-text-action {
+  background: transparent;
+  border: none;
+  color: var(--forest, #0e5c4a);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+  padding: 6px 10px;
+  border-radius: var(--radius-sm, 4px);
+  transition: background var(--transition-fast);
+}
+
+.btn-text-action:hover {
+  background: var(--forest-soft, #e7f0ed);
+}
+
+/* Row Action Icon/Link Button */
+.btn-icon-action,
+.btn-chevron {
+  background: transparent;
+  border: 1px solid var(--line, #e4e1d8);
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--slate, #6b7280);
+  cursor: pointer;
+  padding: 4px 10px;
+  border-radius: 5px;
+  transition: all var(--transition-fast);
+  text-decoration: none;
+}
+
+.btn-icon-action:hover,
+.btn-chevron:hover {
+  color: var(--ink, #14171c);
+  background: #f4f2ec;
+  border-color: var(--line-strong, #d8d4c8);
+}
+
+.btn-icon-action.danger:hover,
+.btn-chevron.danger-text:hover {
+  color: var(--danger, #a3372c);
+  background: var(--danger-soft, #f6e9e7);
+  border-color: #f1c7c2;
+}

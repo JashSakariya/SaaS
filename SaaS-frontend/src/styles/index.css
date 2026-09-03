@@ -1,0 +1,12 @@
+/* ============================================================
+   Ledger Global Design System
+   Imports all modular stylesheets into one central entrypoint
+   ============================================================ */
+@import './tokens.css';
+@import './base.css';
+@import './buttons.css';
+@import './forms.css';
+@import './modals.css';
+@import './tables.css';
+@import './badges.css';
+@import './feedback.css';

@@ -1,0 +1,107 @@
+/* ============================================================
+   Badges, Status Pills & Tags
+   ============================================================ */
+
+/* Status Pills */
+.status-pill,
+.task-status-pill,
+.project-status-pill {
+  display: inline-block;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  padding: 3px 8px;
+  border-radius: var(--radius-sm, 4px);
+}
+
+/* Active & Completed: Forest Green */
+.status-pill.active,
+.status-pill.completed,
+.task-status-pill.completed,
+.project-status-pill.active,
+.project-status-pill.completed {
+  background: var(--forest-soft, #e7f0ed);
+  color: var(--forest, #0e5c4a);
+}
+
+/* In Progress & Blue Status */
+.status-pill.in_progress,
+.task-status-pill.in_progress,
+.status-pill.onboarding {
+  background: var(--info-soft, #e0f2fe);
+  color: var(--info, #0369a1);
+}
+
+/* On Hold & Negotiation: Amber / Gold */
+.status-pill.on_hold,
+.project-status-pill.on_hold,
+.status-pill.negotiation,
+.status-pill.lead {
+  background: var(--gold-soft, #f6ecd9);
+  color: var(--gold, #b8872f);
+}
+
+/* Blocked & Closed: Danger Soft */
+.status-pill.blocked,
+.task-status-pill.blocked,
+.status-pill.closed {
+  background: var(--danger-soft, #f6e9e7);
+  color: var(--danger, #a3372c);
+}
+
+/* To Do / Default: Neutral Slate */
+.status-pill.todo,
+.task-status-pill.todo,
+.status-pill.male,
+.status-pill.female,
+.status-pill.other {
+  background: var(--slate-soft, #f1efe9);
+  color: var(--slate, #6b7280);
+}
+
+/* Count Badge */
+.count-badge,
+.tasks-count-pill {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--slate);
+  background: var(--slate-soft, #f1efe9);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+/* Metadata chip / tag */
+.meta-item,
+.meta-tag,
+.assignee-tag,
+.date-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12px;
+  color: var(--slate, #6b7280);
+}
+
+.meta-chip {
+  background: var(--paper, #fbfaf6);
+  border: 1px solid var(--line, #e4e1d8);
+  padding: 4px 10px;
+  border-radius: 4px;
+}
+
+/* Avatar Icon Badge */
+.avatar-badge,
+.project-avatar-badge {
+  width: 48px;
+  height: 48px;
+  border-radius: 8px;
+  background: var(--forest-soft, #e7f0ed);
+  color: var(--forest, #0e5c4a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  border: 1px solid rgba(14, 92, 74, 0.12);
+}

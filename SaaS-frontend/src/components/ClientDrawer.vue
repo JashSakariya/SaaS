@@ -17,19 +17,19 @@
                         <div class="form-grid">
                             <div class="form-row">
                                 <label>Name</label>
-                                <input class="ledger-input" type="text" v-model="payload.name" required
+                                <input class="form-input" type="text" v-model="payload.name" required
                                     placeholder="Alex Rivera" />
                             </div>
 
                             <div class="form-row">
                                 <label>Email</label>
-                                <input class="ledger-input" type="email" v-model="payload.email" required
+                                <input class="form-input" type="email" v-model="payload.email" required
                                     placeholder="alex@company.com" />
                             </div>
 
                             <div class="form-row">
                                 <label>Phone</label>
-                                <input class="ledger-input" type="tel" v-model="payload.phone" required
+                                <input class="form-input" type="tel" v-model="payload.phone" required
                                     placeholder="+91 90000 00000" pattern="[6-9][0-9]{9}" maxlength="10"
                                     inputmode="numeric" />
                             </div>
@@ -54,7 +54,7 @@
 
                             <div class="form-row full-width">
                                 <label>Company Name</label>
-                                <input class="ledger-input" type="text" v-model="payload.companyName" required
+                                <input class="form-input" type="text" v-model="payload.companyName" required
                                     placeholder="Company Ltd." />
                             </div>
                         </div>
