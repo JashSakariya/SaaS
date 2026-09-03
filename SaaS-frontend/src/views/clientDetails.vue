@@ -39,8 +39,11 @@
       :is-open="showNewProjectModal"
       :client-name="payload.name"
       :client-id="payload.id"
+      :project = "selectedProject"
       @close="showNewProjectModal = false"
       @create="handleProjectCreated"
+      @update="handleProjectEdit"
+      :mode= "modelMode"
     />
 
     <!-- Top Navigation Header (Scrolls naturally) -->
@@ -322,17 +325,16 @@
                     </div>
                     <div>
                       <h4 class="project-name">{{ project.title }}</h4>
-                      <span class="project-subtitle">Active Client Project</span>
+                      <span class="project-subtitle">{{ project.status }}</span>
                     </div>
                   </div>
                   <div class="project-right">
-                    <span class="project-tasks-badge">
-                      {{ project.taskCount }} tasks • {{ project.openCount }} open
-                    </span>
-                    <button type="button" class="btn-chevron" title="Project Details">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                        <polyline points="9 18 15 12 9 6"></polyline>
-                      </svg>
+                    <button type="button" class="btn-chevron" title="Update Project" 
+                    @click="updateProject(project.id)">
+                      Edit
+                    </button>
+                    <button type="button" class="btn-chevron" title="Delete Project" @click="deleteProject(project.id)">
+                      Delete
                     </button>
                   </div>
                 </div>
@@ -417,7 +419,7 @@
 
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router';
-import { onMounted, ref, computed } from 'vue';
+import { onMounted, ref, computed, watch} from 'vue';
 import api from '@/services/ApiService';
 import ClientDrawer from '@/components/ClientDrawer.vue';
 import ProjectModal, { type ProjectFormData } from '@/components/ProjectModal.vue';
@@ -425,6 +427,7 @@ import ProjectModal, { type ProjectFormData } from '@/components/ProjectModal.vu
 const route = useRoute();
 const router = useRouter();
 const clientId = computed(() => route.params.id as string);
+const modelMode =  ref<'create' | 'edit'>('create')
 
 const isLoading = ref(true);
 const errorMessage = ref('');
@@ -434,6 +437,7 @@ const isDeleting = ref(false);
 const showStatusMenu = ref(false);
 const showMoreMenu = ref(false);
 const toastMessage = ref('');
+const selectedProject = ref(null);
 
 // New Project Modal State
 const showNewProjectModal = ref(false);
@@ -464,9 +468,8 @@ const timelineEvents = ref([
 ]);
 
 // Projects state
-const clientProjects = ref([
-  { title: 'Website redesign', taskCount: 3, openCount: 1 }
-]);
+// const clientProjects = ref([]);
+const clientProjects = ref<any[]>([]);
 
 // Initials calculation for Avatar badge
 const initials = computed(() => {
@@ -623,20 +626,86 @@ const addCustomTimelineEvent = () => {
 
 // Add project modal handler
 const addNewProject = () => {
+   modelMode.value = 'create'
   showNewProjectModal.value = true;
+
 };
 
 const handleProjectCreated = async (data: ProjectFormData) => {
   try {
+
+    console.log("duedate check happen or something: ", data)
     const res = await api.post(`/client/${clientId.value}/projects`, data)
     console.log("project creating response: ", res)
     showToast('Project created');
+    fetchClientProjects(clientId.value)
   }
   catch (err) {
     console.log("project creating error: ", err)
     showToast('Failed to create project');
   }
 };
+
+
+const fetchClientProjects = async(clientId:string) =>{
+  try {
+    const res = await api.get(`/client/${clientId}/projects`)
+    clientProjects.value = res.data.data
+    console.log("client projects", clientProjects.value)
+
+  } catch (err) {
+    console.log("client projects error: ", err)
+  }
+}
+
+const updateProject = async(pid:number)=>{
+  try{
+  const res = await api.get(`/client/${clientId.value}/projects/${pid}`)
+  console.log("here it is the result", res?.data?.data)
+  selectedProject.value = res?.data?.data ?? null 
+  modelMode.value = 'edit'
+  showNewProjectModal.value = true;
+  }
+  catch(e){
+    console.log(e)
+  }
+}
+
+const handleProjectEdit = async(data: any) => {
+  console.log("update data is : ", data)
+  try{
+    const res = await api.put(`/client/${clientId.value}/projects/${data.id}`, data)
+    console.log("project updating response: ", res)
+    showToast('Project updated');
+    fetchClientProjects(clientId.value)
+  }
+  catch(err){
+    console.log("project updating error: ", err)
+    showToast('Failed to update project');
+  }
+  //to do
+}
+
+const deleteProject = async(id:number)=>{
+  try {
+    const res = await api.delete(`/client/${clientId.value}/projects/${id}`)
+    showToast('Project deleted successfully');
+    fetchClientProjects(clientId.value);
+  } catch (err) {
+    console.log("project deleting error: ", err)
+    showToast('Failed to delete project');
+  }
+}
+
+watch(
+  () => route.params.id,
+  (newId) => {
+    if (newId) {
+      fetchClientProjects(newId as string)
+    }
+  },
+  { immediate: true }   // pehli load pe bhi chalega
+)
 
 onMounted(() => {
   fetchClientDetails();
