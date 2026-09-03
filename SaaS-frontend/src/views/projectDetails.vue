@@ -184,9 +184,9 @@
               >
                 <!-- Title -->
                 <td class="task-title-cell">
-                  <span class="task-title-text">
+                  <router-link :to="`/clients/${clientId}/projects/${projectId}/tasks/${task.id}`" class="task-title-link">
                     {{ task.title }}
-                  </span>
+                  </router-link>
                 </td>
 
                 <!-- Assignee -->
@@ -254,6 +254,18 @@
         class="actions-dropdown fixed-overlay" 
         :style="taskDropdownStyle"
       >
+        <router-link 
+          :to="`/clients/${clientId}/projects/${projectId}/tasks/${activeDropdownTask.id}`" 
+          class="dropdown-item view-btn"
+          @click="closeTaskDropdown"
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+            <circle cx="12" cy="12" r="3"></circle>
+          </svg>
+          View
+        </router-link>
         <button 
           type="button" 
           @click="openEditTask(activeDropdownTask); closeTaskDropdown();" 
