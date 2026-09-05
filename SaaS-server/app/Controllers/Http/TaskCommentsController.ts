@@ -7,7 +7,11 @@ export default class TaskCommentsController {
   public async index({ params, response }: HttpContextContract) {
     const tid = params.tid
     try {
-      const res = await TaskComment.query().where('task_id', tid).orderBy('created_at', 'asc')
+      const res = await TaskComment.query()
+        .where('task_id', tid)
+        .preload('developer')
+        .orderBy('created_at', 'asc')
+
       return response.status(200).json({
         data: res,
       })
@@ -22,12 +26,15 @@ export default class TaskCommentsController {
 
   public async store({ params, request, response }: HttpContextContract) {
     const tid = params.tid
-    const text = request.input('text')
+    const content = request.input('content') || request.input('text')
     let author = request.input('author')
+    const developerId = request.input('developerId') !== undefined
+      ? request.input('developerId')
+      : (request.input('developer_id') !== undefined ? request.input('developer_id') : null)
 
-    if (!text || !text.trim()) {
+    if (!content || !content.trim()) {
       return response.status(422).json({
-        message: 'Comment text is required',
+        message: 'Comment content is required',
       })
     }
 
@@ -58,9 +65,12 @@ export default class TaskCommentsController {
     try {
       const res = await TaskComment.create({
         taskId: Number(tid),
-        text: text.trim(),
+        content: content.trim(),
+        developerId: developerId ? Number(developerId) : null,
         author: author || 'User',
       })
+
+      await res.load('developer')
 
       return response.status(201).json({
         message: 'Comment created successfully',
@@ -86,11 +96,18 @@ export default class TaskCommentsController {
         })
       }
 
-      if (request.input('text') !== undefined) {
-        res.text = request.input('text').trim()
+      const content = request.input('content') !== undefined ? request.input('content') : request.input('text')
+      if (content !== undefined) {
+        res.content = content.trim()
+      }
+
+      if (request.input('developerId') !== undefined || request.input('developer_id') !== undefined) {
+        const devId = request.input('developerId') !== undefined ? request.input('developerId') : request.input('developer_id')
+        res.developerId = devId ? Number(devId) : null
       }
 
       await res.save()
+      await res.load('developer')
 
       return response.status(200).json({
         message: 'Comment updated successfully',

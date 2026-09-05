@@ -1,11 +1,12 @@
 import type { HttpContextContract } from '@ioc:Adonis/Core/HttpContext'
 import Task from 'App/Models/Task'
+import Developer from 'App/Models/Developer'
 
 export default class TasksController {
   public async index({ params, response }: HttpContextContract) {
     const projectId = params.pid
     try {
-      const res = await Task.query().where('project_id', projectId)
+      const res = await Task.query().where('project_id', projectId).preload('developer')
       return response.status(200).json({
         data: res,
       })
@@ -21,15 +22,30 @@ export default class TasksController {
   public async store({ params, request, response }: HttpContextContract) {
     const projectId = params.pid
     const dueDate = request.input('dueDate') || request.input('due_date') || null
+    const developerId = request.input('developerId') !== undefined
+      ? request.input('developerId')
+      : (request.input('developer_id') !== undefined ? request.input('developer_id') : null)
+
+    const devId = developerId ? Number(developerId) : null
+    let assignee = request.input('assignee') || null
+    if (devId && !assignee) {
+      const dev = await Developer.find(devId)
+      if (dev) {
+        assignee = dev.name
+      }
+    }
 
     try {
       const res = await Task.create({
         title: request.input('title'),
-        assignee: request.input('assignee') || null,
+        assignee: assignee,
+        developerId: devId,
         status: request.input('status') || 'todo',
         dueDate: dueDate,
         projectId: projectId,
       })
+
+      await res.load('developer')
 
       return response.status(201).json({
         message: 'Task created successfully',
@@ -48,7 +64,12 @@ export default class TasksController {
     const pid = params.pid
     const tid = params.tid
     try {
-      const res = await Task.query().where('project_id', pid).where('id', tid).first()
+      const res = await Task.query()
+        .where('project_id', pid)
+        .where('id', tid)
+        .preload('developer')
+        .first()
+
       if (!res) {
         return response.status(404).json({
           message: 'Task not found',
@@ -87,6 +108,18 @@ export default class TasksController {
       if (request.input('assignee') !== undefined) {
         res.assignee = request.input('assignee')
       }
+      if (request.input('developerId') !== undefined || request.input('developer_id') !== undefined) {
+        const devId = request.input('developerId') !== undefined ? request.input('developerId') : request.input('developer_id')
+        res.developerId = devId ? Number(devId) : null
+        if (res.developerId) {
+          const dev = await Developer.find(res.developerId)
+          if (dev) {
+            res.assignee = dev.name
+          }
+        } else if (devId === null) {
+          res.assignee = null
+        }
+      }
       if (request.input('status') !== undefined) {
         res.status = request.input('status')
       }
@@ -96,6 +129,7 @@ export default class TasksController {
       }
 
       await res.save()
+      await res.load('developer')
 
       return response.status(200).json({
         message: 'Task updated successfully',

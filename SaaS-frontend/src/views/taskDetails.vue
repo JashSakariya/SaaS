@@ -84,14 +84,24 @@
           </p>
 
           <div class="task-meta-pills">
-            <span v-if="taskData.assignee" class="meta-item">
+            <span v-if="taskData.developer" class="meta-item developer-assigned">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                <circle cx="12" cy="7" r="4"></circle>
+              </svg>
+              {{ taskData.developer.name }}
+              <span class="meta-category-badge" :class="getCategoryClass(taskData.developer.category)">
+                {{ taskData.developer.category }}
+              </span>
+            </span>
+            <span v-else-if="taskData.assignee" class="meta-item">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                 <circle cx="12" cy="7" r="4"></circle>
               </svg>
               {{ taskData.assignee }}
             </span>
-            <span v-else class="meta-item">
+            <span v-else class="meta-item unassigned">
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                 <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                 <circle cx="12" cy="7" r="4"></circle>
@@ -128,22 +138,26 @@
         </div>
       </div>
 
-      <!-- Comments / Feedback Card Section -->
+      <!-- Activity Notes Card Section -->
       <div class="card comments-card">
         <div class="comments-header">
           <div class="comments-title-wrap">
             <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-              <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+              <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+              <polyline points="14 2 14 8 20 8"></polyline>
+              <line x1="16" y1="13" x2="8" y2="13"></line>
+              <line x1="16" y1="17" x2="8" y2="17"></line>
+              <polyline points="10 9 9 9 8 9"></polyline>
             </svg>
-            <h2 class="comments-title">Comments</h2>
+            <h2 class="comments-title">Activity notes</h2>
             <span class="comments-count">({{ comments.length }})</span>
           </div>
         </div>
 
-        <!-- Comments List -->
+        <!-- Notes List -->
         <div class="comments-list">
           <div v-if="comments.length === 0" class="no-comments-prompt">
-            No comments yet. Be the first to share an update or feedback!
+            No activity notes yet. Add updates or key milestones below.
           </div>
 
           <div 
@@ -151,29 +165,31 @@
             :key="comment.id" 
             class="comment-item"
           >
-            <div class="comment-avatar">
-              {{ ((comment.author || 'U').charAt(0)).toUpperCase() }}
-            </div>
             <div class="comment-body">
               <div class="comment-top-row">
                 <div class="comment-meta">
-                  <span class="comment-author">{{ comment.author || 'User' }}</span>
                   <span class="comment-time" :title="comment.createdAt || comment.created_at">
                     {{ formatCommentDate(comment.createdAt || comment.created_at) }}
+                  </span>
+                  <span v-if="comment.developer" class="comment-developer-badge">
+                    <span class="dot-indicator"></span>
+                    {{ comment.developer.name }} ({{ comment.developer.category }})
                   </span>
                 </div>
                 
                 <div class="action-wrapper">
                   <button 
                     @click.stop="toggleCommentDropdown($event, comment)"
-                    class="btn-action-trigger" 
+                    class="btn-action-dots" 
                     :class="{ active: activeCommentDropdownId === comment.id }"
                     type="button"
+                    aria-label="Actions"
+                    title="Actions"
                   >
-                    Action
-                    <svg class="chevron-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <polyline points="6 9 12 15 18 9"></polyline>
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor">
+                      <circle cx="5" cy="12" r="2"></circle>
+                      <circle cx="12" cy="12" r="2"></circle>
+                      <circle cx="19" cy="12" r="2"></circle>
                     </svg>
                   </button>
                 </div>
@@ -185,7 +201,7 @@
                   v-model="editingCommentText" 
                   class="comment-edit-textarea" 
                   rows="2"
-                  placeholder="Edit comment..."
+                  placeholder="Edit note..."
                   @keydown.esc="cancelEditComment"
                 ></textarea>
                 <div class="comment-edit-actions">
@@ -202,28 +218,40 @@
               </div>
 
               <div v-else class="comment-message">
-                {{ comment.text }}
+                {{ comment.content || comment.text }}
               </div>
             </div>
           </div>
         </div>
 
-        <!-- Write Feedback / Comment Input -->
+        <!-- Add Activity Note Form -->
         <div class="comment-form-container">
-          <form @submit.prevent="postComment" class="comment-form">
-            <input 
-              v-model="newCommentText" 
-              type="text" 
-              placeholder="Write a comment..." 
-              class="comment-input"
-            />
-            <button 
-              type="submit" 
-              class="btn-primary post-btn" 
-              :disabled="!newCommentText.trim() || isPostingComment"
-            >
-              {{ isPostingComment ? 'Posting...' : 'Post' }}
-            </button>
+          <form @submit.prevent="postComment" class="comment-form-box">
+            <div v-if="developers.length > 0" class="note-dev-select-row">
+              <label class="note-dev-label">Attribute to employee (optional):</label>
+              <select v-model="newCommentDevId" class="note-dev-select">
+                <option :value="null">No attribution (General note)</option>
+                <option v-for="dev in developers" :key="dev.id" :value="dev.id">
+                  {{ dev.name }} ({{ dev.category }})
+                </option>
+              </select>
+            </div>
+
+            <div class="comment-input-row">
+              <input 
+                v-model="newCommentText" 
+                type="text" 
+                placeholder="Add an activity note or milestone update..." 
+                class="comment-input"
+              />
+              <button 
+                type="submit" 
+                class="btn-primary post-btn" 
+                :disabled="!newCommentText.trim() || isPostingComment"
+              >
+                {{ isPostingComment ? 'Adding...' : 'Add note' }}
+              </button>
+            </div>
           </form>
         </div>
       </div>
@@ -303,7 +331,9 @@ const projectData = ref<any>({
 
 // Feedback & Comments state
 const newCommentText = ref('');
+const newCommentDevId = ref<number | null>(null);
 const comments = ref<any[]>([]);
+const developers = ref<any[]>([]);
 const isPostingComment = ref(false);
 const editingCommentId = ref<number | null>(null);
 const editingCommentText = ref('');
@@ -312,6 +342,37 @@ const isSavingComment = ref(false);
 const activeCommentDropdownId = ref<number | null>(null);
 const activeComment = ref<any>(null);
 const commentDropdownStyle = ref<Record<string, string>>({});
+
+// Category Badge Helper
+const getCategoryClass = (category: string) => {
+  switch (category?.toLowerCase()) {
+    case 'ui':
+      return 'cat-ui';
+    case 'frontend':
+      return 'cat-frontend';
+    case 'backend':
+      return 'cat-backend';
+    case 'full stack':
+    case 'fullstack':
+      return 'cat-fullstack';
+    case 'devops':
+      return 'cat-devops';
+    case 'executive':
+      return 'cat-executive';
+    case 'tester (qa)':
+    case 'tester':
+    case 'qa':
+      return 'cat-qa';
+    case 'seo':
+      return 'cat-seo';
+    case 'marketing':
+      return 'cat-marketing';
+    case 'sales':
+      return 'cat-sales';
+    default:
+      return 'cat-default';
+  }
+};
 
 // Format Date & Relative Time
 const formatCommentDate = (dateStr: string | null | undefined) => {
@@ -339,6 +400,18 @@ const formatCommentDate = (dateStr: string | null | undefined) => {
   }
 };
 
+// Fetch Developers List
+const fetchDevelopers = async () => {
+  try {
+    const res = await api.get('/developers');
+    if (res.data?.data) {
+      developers.value = res.data.data;
+    }
+  } catch (err) {
+    console.error('Error fetching developers:', err);
+  }
+};
+
 // Fetch Comments
 const fetchComments = async () => {
   try {
@@ -357,7 +430,10 @@ const postComment = async () => {
   isPostingComment.value = true;
   try {
     const payload = {
+      content: newCommentText.value.trim(),
       text: newCommentText.value.trim(),
+      developer_id: newCommentDevId.value || null,
+      developerId: newCommentDevId.value || null,
       author: localStorage.getItem('userName') || undefined,
     };
     const res = await api.post(
@@ -368,10 +444,11 @@ const postComment = async () => {
       comments.value.push(res.data.data);
     }
     newCommentText.value = '';
-    showToast('Comment posted');
+    newCommentDevId.value = null;
+    showToast('Activity note added');
   } catch (err) {
-    console.error('Error posting comment:', err);
-    showToast('Failed to post comment');
+    console.error('Error posting note:', err);
+    showToast('Failed to add note');
   } finally {
     isPostingComment.value = false;
   }
@@ -380,7 +457,7 @@ const postComment = async () => {
 // Edit / Update Comment
 const startEditComment = (comment: any) => {
   editingCommentId.value = comment.id;
-  editingCommentText.value = comment.text;
+  editingCommentText.value = comment.content || comment.text || '';
   closeCommentDropdown();
 };
 
@@ -395,7 +472,10 @@ const saveEditComment = async (commentId: number) => {
   try {
     const res = await api.put(
       `/client/${clientId.value}/projects/${projectId.value}/tasks/${taskId.value}/comments/${commentId}`,
-      { text: editingCommentText.value.trim() }
+      {
+        content: editingCommentText.value.trim(),
+        text: editingCommentText.value.trim(),
+      }
     );
     const updated = res.data?.data;
     const idx = comments.value.findIndex(c => c.id === commentId);
@@ -403,16 +483,17 @@ const saveEditComment = async (commentId: number) => {
       if (updated) {
         comments.value[idx] = updated;
       } else {
+        comments.value[idx].content = editingCommentText.value.trim();
         comments.value[idx].text = editingCommentText.value.trim();
         comments.value[idx].updatedAt = new Date().toISOString();
       }
     }
     editingCommentId.value = null;
     editingCommentText.value = '';
-    showToast('Comment updated');
+    showToast('Note updated');
   } catch (err) {
-    console.error('Error updating comment:', err);
-    showToast('Failed to update comment');
+    console.error('Error updating note:', err);
+    showToast('Failed to update note');
   } finally {
     isSavingComment.value = false;
   }
@@ -558,6 +639,7 @@ onMounted(async () => {
     fetchTaskData(),
     fetchProjectData(),
     fetchComments(),
+    fetchDevelopers(),
   ]);
 });
 </script>
@@ -902,14 +984,146 @@ onMounted(async () => {
   cursor: not-allowed;
 }
 
-/* Comment Form */
+/* Developer Assignment Badge in Hero */
+.meta-item.developer-assigned {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-weight: 500;
+  color: var(--ink, #14171c);
+}
+
+.meta-category-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-size: 10.5px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+/* Category colors */
+.cat-ui {
+  background: #e0f2fe;
+  color: #0369a1;
+}
+
+.cat-frontend {
+  background: #dcfce7;
+  color: #15803d;
+}
+
+.cat-backend {
+  background: #fef3c7;
+  color: #b45309;
+}
+
+.cat-fullstack {
+  background: #ccfbf1;
+  color: #0f766e;
+}
+
+.cat-devops {
+  background: #e0e7ff;
+  color: #4338ca;
+}
+
+.cat-executive {
+  background: #f3e8ff;
+  color: #7e22ce;
+}
+
+.cat-qa {
+  background: #ffe4e6;
+  color: #be123c;
+}
+
+.cat-seo {
+  background: #ecfccb;
+  color: #4d7c0f;
+}
+
+.cat-marketing {
+  background: #ffedd5;
+  color: #c2410c;
+}
+
+.cat-sales {
+  background: #f3e8ff;
+  color: #7e22ce;
+}
+
+.cat-default {
+  background: #f1f5f9;
+  color: #475569;
+}
+
+/* Comment Developer Attribution Badge */
+.comment-developer-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.5px;
+  font-weight: 600;
+  color: var(--forest, #0e5c4a);
+  background: var(--forest-soft, #e7f0ed);
+  padding: 2px 8px;
+  border-radius: 4px;
+}
+
+.dot-indicator {
+  width: 5px;
+  height: 5px;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* Add Activity Note Form */
 .comment-form-container {
   margin-top: 8px;
   padding-top: 18px;
   border-top: 1px solid var(--line, #e4e1d8);
 }
 
-.comment-form {
+.comment-form-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.note-dev-select-row {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.note-dev-label {
+  font-size: 12px;
+  color: var(--slate, #6b7280);
+  font-weight: 500;
+}
+
+.note-dev-select {
+  background: var(--paper, #fbfaf6);
+  border: 1px solid var(--line, #e4e1d8);
+  border-radius: var(--radius-sm, 4px);
+  padding: 4px 10px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  color: var(--ink);
+  outline: none;
+  cursor: pointer;
+  transition: border-color var(--transition-fast);
+}
+
+.note-dev-select:focus {
+  border-color: var(--forest);
+  background: #ffffff;
+}
+
+.comment-input-row {
   display: flex;
   align-items: center;
   gap: 12px;

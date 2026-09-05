@@ -10,6 +10,7 @@ import ClientsLayout from '@/layouts/ClientsLayout.vue'
 import ClientDetails from '@/views/clientDetails.vue'
 import ProjectDetails from '@/views/projectDetails.vue'
 import TaskDetails from '@/views/taskDetails.vue'
+import Developers from '@/views/developers.vue'
 
 
 const router = createRouter({
@@ -44,6 +45,12 @@ const router = createRouter({
           path: 'dashboard',
           name: 'dashboard',
           component: Dashboard,
+        },
+
+        {
+          path: 'developers',
+          name: 'developers',
+          component: Developers,
         },
 
         {

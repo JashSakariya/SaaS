@@ -173,7 +173,7 @@
                 <th>Assignee</th>
                 <th>Due Date</th>
                 <th>Status</th>
-                <th class="text-right">Actions</th>
+                <th class="text-right action-column">Actions</th>
               </tr>
             </thead>
             <tbody>
@@ -191,7 +191,17 @@
 
                 <!-- Assignee -->
                 <td class="assignee-cell">
-                  <div v-if="task.assignee" class="assignee-tag">
+                  <div v-if="task.developer" class="assignee-tag developer-assigned-tag">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                      <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                      <circle cx="12" cy="7" r="4"></circle>
+                    </svg>
+                    <span>{{ task.developer.name }}</span>
+                    <span class="category-pill mini" :class="getCategoryClass(task.developer.category)">
+                      {{ task.developer.category }}
+                    </span>
+                  </div>
+                  <div v-else-if="task.assignee" class="assignee-tag">
                     <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                       <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                       <circle cx="12" cy="7" r="4"></circle>
@@ -226,14 +236,16 @@
                   <div class="action-wrapper">
                     <button 
                       @click.stop="toggleTaskDropdown($event, task)"
-                      class="btn-action-trigger" 
+                      class="btn-action-dots" 
                       :class="{ active: activeTaskDropdownId === task.id }"
                       type="button"
+                      aria-label="Actions"
+                      title="Actions"
                     >
-                      Action
-                      <svg class="chevron-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                        stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <polyline points="6 9 12 15 18 9"></polyline>
+                      <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                        <circle cx="5" cy="12" r="2"></circle>
+                        <circle cx="12" cy="12" r="2"></circle>
+                        <circle cx="19" cy="12" r="2"></circle>
                       </svg>
                     </button>
                   </div>
@@ -411,10 +423,42 @@ const filteredTasks = computed(() => {
   const q = searchQuery.value.toLowerCase().trim();
   return tasks.value.filter((t: any) =>
     t.title?.toLowerCase().includes(q) ||
+    t.developer?.name?.toLowerCase().includes(q) ||
+    t.developer?.category?.toLowerCase().includes(q) ||
     t.assignee?.toLowerCase().includes(q) ||
     t.status?.toLowerCase().includes(q)
   );
 });
+
+const getCategoryClass = (category: string) => {
+  switch (category?.toLowerCase()) {
+    case 'ui':
+      return 'cat-ui';
+    case 'frontend':
+      return 'cat-frontend';
+    case 'backend':
+      return 'cat-backend';
+    case 'full stack':
+    case 'fullstack':
+      return 'cat-fullstack';
+    case 'devops':
+      return 'cat-devops';
+    case 'executive':
+      return 'cat-executive';
+    case 'tester (qa)':
+    case 'tester':
+    case 'qa':
+      return 'cat-qa';
+    case 'seo':
+      return 'cat-seo';
+    case 'marketing':
+      return 'cat-marketing';
+    case 'sales':
+      return 'cat-sales';
+    default:
+      return 'cat-default';
+  }
+};
 
 const formatStatus = (st: string) => {
   if (!st) return '—';
@@ -622,4 +666,32 @@ watch(
 .client-link-underline:hover {
   text-decoration: underline;
 }
+
+/* Developer Assigned Tag & Specialty Badges */
+.developer-assigned-tag {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.category-pill.mini {
+  font-size: 10px;
+  padding: 1px 6px;
+  border-radius: 3px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+
+.cat-ui { background: #e0f2fe; color: #0369a1; }
+.cat-frontend { background: #dcfce7; color: #15803d; }
+.cat-backend { background: #fef3c7; color: #b45309; }
+.cat-fullstack { background: #ccfbf1; color: #0f766e; }
+.cat-devops { background: #e0e7ff; color: #4338ca; }
+.cat-executive { background: #f3e8ff; color: #7e22ce; }
+.cat-qa { background: #ffe4e6; color: #be123c; }
+.cat-seo { background: #ecfccb; color: #4d7c0f; }
+.cat-marketing { background: #ffedd5; color: #c2410c; }
+.cat-sales { background: #f3e8ff; color: #7e22ce; }
+.cat-default { background: #f1f5f9; color: #475569; }
 </style>
