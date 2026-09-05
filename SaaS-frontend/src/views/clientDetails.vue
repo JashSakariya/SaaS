@@ -330,7 +330,22 @@
             <div class="card-body padding-off">
               <div class="projects-container">
                 <div v-if="clientProjects.length === 0" class="empty-projects-state">
-                  <p>No projects found. Click "+ New Project" to add one.</p>
+                  <div class="empty-projects-icon">
+                    <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75">
+                      <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+                      <polyline points="2 17 12 22 22 17"></polyline>
+                      <polyline points="2 12 12 17 22 12"></polyline>
+                    </svg>
+                  </div>
+                  <h4 class="empty-projects-title">No projects found</h4>
+                  <p class="empty-projects-subtitle">Create a project to organize tasks and track deliverables for this client.</p>
+                  <button type="button" class="empty-projects-btn" @click="addNewProject">
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                      <line x1="12" y1="5" x2="12" y2="19"></line>
+                      <line x1="5" y1="12" x2="19" y2="12"></line>
+                    </svg>
+                    New Project
+                  </button>
                 </div>
                 <div v-for="(project, index) in clientProjects" :key="index" class="project-block-item">
                   <div class="project-row-item">
@@ -1592,6 +1607,63 @@ onUnmounted(() => {
 .projects-container {
   display: flex;
   flex-direction: column;
+}
+
+.empty-projects-state {
+  padding: 36px 20px;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.empty-projects-icon {
+  width: 42px;
+  height: 42px;
+  border-radius: 50%;
+  background: var(--forest-soft, #e7f0ed);
+  color: var(--forest, #0e5c4a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.empty-projects-title {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ink);
+  margin: 0 0 4px;
+}
+
+.empty-projects-subtitle {
+  font-size: 13px;
+  color: var(--slate);
+  margin: 0 0 14px;
+  max-width: 320px;
+  line-height: 1.4;
+}
+
+.empty-projects-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: var(--forest, #0e5c4a);
+  color: #ffffff;
+  border: none;
+  font-family: var(--font-body);
+  font-size: 12px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: var(--radius-md, 6px);
+  cursor: pointer;
+  transition: background var(--transition-fast, 0.15s ease);
+}
+
+.empty-projects-btn:hover {
+  background: var(--forest-dark, #0a4638);
 }
 
 .project-row-item {
