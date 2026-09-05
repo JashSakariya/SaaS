@@ -1,6 +1,7 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, belongsTo, BelongsTo } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, column, belongsTo, BelongsTo, hasMany, HasMany } from '@ioc:Adonis/Lucid/Orm'
 import ClientProject from 'App/Models/ClientProject'
+import TaskComment from './TaskComment'
 
 export default class Task extends BaseModel {
   @column({ isPrimary: true })
@@ -29,4 +30,8 @@ export default class Task extends BaseModel {
 
   @belongsTo(() => ClientProject, { foreignKey: 'projectId' })
   public project!: BelongsTo<typeof ClientProject>
+
+  @hasMany(() => TaskComment, { foreignKey: 'taskId' })
+  public comments!: HasMany<typeof TaskComment>
+
 }

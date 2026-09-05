@@ -112,6 +112,9 @@ const onLogin = async () => {
     const response = await api.post('/login', login.value)
     localStorage.setItem('accessToken', response.data.accessToken)
     localStorage.setItem('refreshToken', response.data.refreshToken)
+    if (response.data.user?.name) {
+      localStorage.setItem('userName', response.data.user.name)
+    }
     router.push('/dashboard')
   } catch (error: any) {
     errorMsg.value =
