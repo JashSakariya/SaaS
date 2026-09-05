@@ -141,10 +141,32 @@
   background: #fbfaf6;
 }
 
-/* Row Action Wrapper */
-.row-actions,
-.action-cell {
-  display: flex;
+/* Right-aligned text & Action columns */
+.text-right {
+  text-align: right !important;
+}
+
+th.text-right,
+td.text-right {
+  text-align: right !important;
+}
+
+.action-cell,
+th.action-column {
+  text-align: right !important;
+  white-space: nowrap;
+  width: 70px;
+  min-width: 70px;
+}
+
+.action-wrapper {
+  display: inline-flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.row-actions {
+  display: inline-flex;
   align-items: center;
   justify-content: flex-end;
   gap: 8px;

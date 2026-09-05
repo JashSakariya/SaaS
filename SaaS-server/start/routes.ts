@@ -24,4 +24,19 @@ Route.get('/client/:id/projects/:pid/tasks/:tid', 'TasksController.show')
 Route.put('/client/:id/projects/:pid/tasks/:tid', 'TasksController.update')
 Route.delete('/client/:id/projects/:pid/tasks/:tid', 'TasksController.destroy')
 
+// task comments fetch, store, update, delete
+Route.get('/client/:id/projects/:pid/tasks/:tid/comments', 'TaskCommentsController.index')
+Route.post('/client/:id/projects/:pid/tasks/:tid/comments', 'TaskCommentsController.store')
+Route.put('/client/:id/projects/:pid/tasks/:tid/comments/:cid', 'TaskCommentsController.update')
+Route.delete('/client/:id/projects/:pid/tasks/:tid/comments/:cid', 'TaskCommentsController.destroy')
+
+// developers fetch, store, get, update, delete
+Route.get('/developers', 'DevelopersController.index')
+Route.post('/developers', 'DevelopersController.store')
+Route.get('/developers/:id', 'DevelopersController.show')
+Route.put('/developers/:id', 'DevelopersController.update')
+Route.delete('/developers/:id', 'DevelopersController.destroy')
+
+
+
 

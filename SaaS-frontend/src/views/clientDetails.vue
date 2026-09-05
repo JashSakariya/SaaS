@@ -369,14 +369,16 @@
                       <div class="action-wrapper">
                         <button 
                           @click.stop="toggleProjectDropdown($event, project)"
-                          class="btn-action-trigger" 
+                          class="btn-action-dots" 
                           :class="{ active: activeProjectDropdownId === project.id }"
                           type="button"
+                          aria-label="Actions"
+                          title="Actions"
                         >
-                          Action
-                          <svg class="chevron-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                            stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="6 9 12 15 18 9"></polyline>
+                          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                            <circle cx="5" cy="12" r="2"></circle>
+                            <circle cx="12" cy="12" r="2"></circle>
+                            <circle cx="19" cy="12" r="2"></circle>
                           </svg>
                         </button>
                       </div>
@@ -433,12 +435,12 @@
                               <span class="task-status-badge" :class="task.status">
                                 {{ task.status.replace('_', ' ') }}
                               </span>
-                              <span v-if="task.assignee" class="task-assignee-tag">
+                              <span v-if="task.developer || task.assignee" class="task-assignee-tag">
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
                                   <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
                                   <circle cx="12" cy="7" r="4"></circle>
                                 </svg>
-                                {{ task.assignee }}
+                                {{ task.developer?.name || task.assignee }}
                               </span>
                               <span v-if="task.due_date || task.dueDate" class="task-due-tag">
                                 <svg width="11" height="11" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">

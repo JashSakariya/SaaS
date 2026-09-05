@@ -142,6 +142,9 @@ const onSubmit = async () => {
     const response = await api.post('/user', user.value)
     localStorage.setItem('accessToken', response.data.accessToken)
     localStorage.setItem('refreshToken', response.data.refreshToken)
+    if (response.data.user?.name) {
+      localStorage.setItem('userName', response.data.user.name)
+    }
     await router.push('/dashboard')
   } catch (error: any) {
     errorMsg.value =

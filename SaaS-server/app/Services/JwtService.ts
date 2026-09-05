@@ -5,7 +5,8 @@ export default class JwtService {
     public static generateAccessToken(user: any) {
         return jwt.sign({
             id: user.id,
-            email: user.email
+            email: user.email,
+            name: user.name
         },
             Env.get('JWT_SECRET'),
             {

@@ -191,6 +191,33 @@
   transform: rotate(180deg);
 }
 
+/* 3-Dots Action Trigger Button (...) */
+.btn-action-dots {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 30px;
+  height: 30px;
+  border-radius: var(--radius-sm, 6px);
+  background: transparent;
+  border: 1px solid transparent;
+  color: var(--slate, #6b7280);
+  cursor: pointer;
+  padding: 0;
+  transition: all var(--transition-fast, 0.15s ease);
+}
+
+.btn-action-dots:hover,
+.btn-action-dots.active {
+  background: var(--paper, #f4f2ec);
+  border-color: var(--line, #e4e1d8);
+  color: var(--ink, #14171c);
+}
+
+.btn-action-dots svg {
+  display: block;
+}
+
 .dropdown-backdrop {
   position: fixed;
   top: 0;

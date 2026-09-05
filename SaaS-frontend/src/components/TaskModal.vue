@@ -22,10 +22,21 @@
             <input type="text" v-model="form.title" class="task-form-input" placeholder="e.g. Design wireframes & brand kit" />
           </div>
 
-          <!-- Assignee -->
+          <!-- Assigned Employee Dropdown -->
           <div class="task-form-group">
-            <label class="task-form-label">Assignee</label>
-            <input type="text" v-model="form.assignee" class="task-form-input" placeholder="e.g. Sarah Connor or sarah@example.com" />
+            <label class="task-form-label">Assign Employee</label>
+            <div class="select-input-wrapper">
+              <select v-model="form.developerId" class="task-form-select">
+                <option :value="null">Unassigned</option>
+                <option v-for="dev in developers" :key="dev.id" :value="dev.id">
+                  {{ dev.name }} ({{ dev.category }})
+                </option>
+              </select>
+              <svg class="chevron-icon" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="6 9 12 15 18 9"></polyline>
+              </svg>
+            </div>
           </div>
 
           <!-- Row: Due Date & Status -->
@@ -91,11 +102,14 @@
 </template>
 
 <script setup lang="ts">
-import { ref, watch } from 'vue';
+import { ref, watch, onMounted } from 'vue';
+import api from '@/services/ApiService';
 
 export interface TaskFormData {
   title: string;
-  assignee: string;
+  assignee?: string;
+  developerId?: number | null;
+  developer_id?: number | null;
   dueDate: string;
   status: 'todo' | 'in_progress' | 'completed' | 'blocked';
 }
@@ -110,6 +124,9 @@ const props = defineProps<{
     id: number;
     title: string;
     assignee?: string | null;
+    developer?: { id: number; name: string; category: string } | null;
+    developerId?: number | null;
+    developer_id?: number | null;
     status: string;
     due_date?: string | null;
     dueDate?: string | null;
@@ -122,9 +139,23 @@ const emit = defineEmits<{
   (e: 'update', data: TaskFormData & { id: number }): void;
 }>();
 
+const developers = ref<Array<{ id: number; name: string; category: string }>>([]);
+
+const fetchDevelopersList = async () => {
+  try {
+    const res = await api.get('/developers');
+    if (res.data?.data) {
+      developers.value = res.data.data;
+    }
+  } catch (err) {
+    console.error('Error fetching developers list:', err);
+  }
+};
+
 const form = ref<TaskFormData>({
   title: '',
   assignee: '',
+  developerId: null,
   dueDate: '',
   status: 'todo',
 });
@@ -133,11 +164,18 @@ watch(
   () => props.isOpen,
   (newVal) => {
     if (newVal) {
+      fetchDevelopersList();
       if (props.mode === 'edit' && props.task) {
         const rawDate = props.task.due_date ?? (props.task as any)?.dueDate;
+        const devId =
+          props.task.developer?.id ??
+          props.task.developer_id ??
+          (props.task as any)?.developerId ??
+          null;
         form.value = {
           title: props.task.title || '',
           assignee: props.task.assignee || '',
+          developerId: devId,
           dueDate: rawDate ? rawDate.split('T')[0] : '',
           status: (props.task.status as any) || 'todo',
         };
@@ -145,6 +183,7 @@ watch(
         form.value = {
           title: '',
           assignee: '',
+          developerId: null,
           dueDate: '',
           status: 'todo',
         };
@@ -153,16 +192,27 @@ watch(
   }
 );
 
+onMounted(() => {
+  fetchDevelopersList();
+});
+
 const closeModal = () => {
   emit('close');
 };
 
 const handleSubmit = () => {
   if (!form.value.title.trim()) return;
+  const selectedDev = developers.value.find((d) => d.id === form.value.developerId);
+  const payload = {
+    ...form.value,
+    assignee: selectedDev ? selectedDev.name : (form.value.assignee || undefined),
+    developer_id: form.value.developerId,
+    developerId: form.value.developerId,
+  };
   if (props.mode === 'edit' && props.task?.id) {
-    emit('update', { id: props.task.id, ...form.value });
+    emit('update', { id: props.task.id, ...payload });
   } else {
-    emit('create', { ...form.value });
+    emit('create', payload);
   }
   closeModal();
 };

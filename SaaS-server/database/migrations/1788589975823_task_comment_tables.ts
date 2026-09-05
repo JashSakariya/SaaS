@@ -1,0 +1,20 @@
+import BaseSchema from '@ioc:Adonis/Lucid/Schema'
+
+export default class TaskCommentTables extends BaseSchema {
+  protected tableName = 'task_comments'
+
+  public async up() {
+    this.schema.createTable(this.tableName, (table) => {
+      table.increments('id')
+      table.integer('task_id').unsigned().references('id').inTable('tasks').onDelete('CASCADE')
+      table.string('author').nullable()
+      table.text('content').notNullable()
+      table.timestamp('created_at', { useTz: true })
+      table.timestamp('updated_at', { useTz: true })
+    })
+  }
+
+  public async down () {
+    this.schema.dropTable(this.tableName)
+  }
+}

@@ -95,7 +95,7 @@
               <th>Phone</th>
               <th>Gender</th>
               <th>Company</th>
-              <th class="text-right">Action</th>
+              <th class="text-right action-column">Action</th>
             </tr>
           </thead>
           <tbody>
@@ -131,14 +131,16 @@
                 <div class="action-wrapper">
                   <button 
                     @click.stop="toggleDropdown($event, client)"
-                    class="btn-action-trigger" 
+                    class="btn-action-dots" 
                     :class="{ active: activeClientId === client.id }"
                     type="button"
+                    aria-label="Actions"
+                    title="Actions"
                   >
-                    Action
-                    <svg class="chevron-icon" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor"
-                      stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                      <polyline points="6 9 12 15 18 9"></polyline>
+                    <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor">
+                      <circle cx="5" cy="12" r="2"></circle>
+                      <circle cx="12" cy="12" r="2"></circle>
+                      <circle cx="19" cy="12" r="2"></circle>
                     </svg>
                   </button>
                 </div>
@@ -440,11 +442,13 @@ onUnmounted(() => {
 
 .action-cell {
   position: relative;
-  width: 120px;
+  text-align: right;
+  white-space: nowrap;
 }
 
 .action-wrapper {
   position: relative;
-  display: inline-block;
+  display: inline-flex;
+  justify-content: flex-end;
 }
 </style>
