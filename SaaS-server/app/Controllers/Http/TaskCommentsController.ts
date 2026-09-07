@@ -65,7 +65,7 @@ export default class TaskCommentsController {
     try {
       const res = await TaskComment.create({
         taskId: Number(tid),
-        content: content.trim(),
+        text: content.trim(),
         developerId: developerId ? Number(developerId) : null,
         author: author || 'User',
       })

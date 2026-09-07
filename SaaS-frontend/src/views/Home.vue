@@ -64,36 +64,25 @@ const users = [
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
-
 .dashboard-view {
   width: 100%;
 }
 
 .welcome-block {
-  margin-bottom: 32px;
-}
-
-.ledger-label {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--slate, #6b7280);
-  margin: 0 0 6px;
+  margin-bottom: var(--space-xl);
 }
 
 .welcome-block h1 {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: var(--font-display, 'Fraunces', Georgia, serif);
   font-weight: 500;
-  font-size: 32px;
-  margin: 0 0 6px;
+  font-size: var(--text-2xl);
+  margin: 0 0 var(--space-xs);
   color: var(--ink, #14171c);
 }
 
 .subtitle {
   color: var(--slate, #6b7280);
-  font-size: 14px;
+  font-size: var(--text-sm);
   margin: 0;
 }
 
@@ -101,33 +90,34 @@ const users = [
 .cards {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
-  gap: 20px;
-  margin-bottom: 36px;
+  gap: var(--space-md);
+  margin-bottom: var(--space-xl);
 }
 
 .card {
   background: var(--surface, #ffffff);
   border: 1px solid var(--line, #e4e1d8);
-  border-radius: var(--radius, 3px);
-  padding: 22px;
+  border-radius: var(--radius-md, 8px);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-sm);
 }
 
 .card-value {
-  font-family: 'Fraunces', Georgia, serif;
-  font-size: 30px;
+  font-family: var(--font-display, 'Fraunces', Georgia, serif);
+  font-size: var(--text-2xl);
   font-weight: 500;
-  margin: 4px 0 14px;
+  margin: var(--space-xs) 0 var(--space-md);
 }
 
 .card-rule {
   height: 1px;
   background: var(--line, #e4e1d8);
-  margin-bottom: 10px;
+  margin-bottom: var(--space-sm);
 }
 
 .card-delta {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 12px;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
   margin: 0;
 }
 
@@ -143,21 +133,22 @@ const users = [
 .table-container {
   background: var(--surface, #ffffff);
   border: 1px solid var(--line, #e4e1d8);
-  border-radius: var(--radius, 3px);
-  padding: 28px;
+  border-radius: var(--radius-md, 8px);
+  padding: var(--space-lg);
+  box-shadow: var(--shadow-sm);
 }
 
 .table-head {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  margin-bottom: 18px;
+  margin-bottom: var(--space-md);
 }
 
 .table-head h2 {
-  font-family: 'Fraunces', Georgia, serif;
+  font-family: var(--font-display, 'Fraunces', Georgia, serif);
   font-weight: 500;
-  font-size: 20px;
+  font-size: var(--text-lg);
   margin: 0;
   color: var(--ink, #14171c);
 }
@@ -169,26 +160,26 @@ table {
 
 th {
   text-align: left;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--slate, #6b7280);
   font-weight: 500;
-  padding: 10px 12px;
+  padding: var(--space-sm) var(--space-md);
   border-bottom: 1.5px solid var(--line, #e4e1d8);
 }
 
 td {
-  padding: 14px 12px;
+  padding: var(--space-md);
   border-bottom: 1px solid var(--line, #e4e1d8);
-  font-size: 14px;
+  font-size: var(--text-sm);
   color: var(--ink, #14171c);
 }
 
 td.mono {
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 13px;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
   color: var(--slate, #6b7280);
 }
 
@@ -197,10 +188,11 @@ tr:hover td {
 }
 
 .status-pill {
-  display: inline-block;
-  font-family: 'IBM Plex Mono', monospace;
-  font-size: 11px;
-  padding: 3px 10px;
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  padding: 2px var(--space-sm);
   border-radius: 999px;
 }
 

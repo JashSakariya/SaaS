@@ -367,27 +367,28 @@ onUnmounted(() => {
 .clients-view {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 0 60px;
+  padding: 0 0 var(--space-2xl);
 }
 
 .page-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: var(--space-lg);
+  gap: var(--space-md);
 }
 
 .page-title {
   font-family: var(--font-display, 'Fraunces', Georgia, serif);
   font-weight: 500;
-  font-size: 28px;
-  margin: 0 0 4px;
+  font-size: var(--text-2xl);
+  margin: 0 0 var(--space-xs);
   color: var(--ink, #14171c);
 }
 
 .subtitle {
   color: var(--slate, #6b7280);
-  font-size: 14px;
+  font-size: var(--text-sm);
   margin: 0;
 }
 
@@ -395,17 +396,17 @@ onUnmounted(() => {
 .client-profile-cell {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 .avatar-sm {
-  width: 32px;
-  height: 32px;
+  width: var(--space-xl);
+  height: var(--space-xl);
   border-radius: 50%;
   background: var(--forest-soft, #e7f0ed);
   color: var(--forest, #0e5c4a);
   font-family: var(--font-body, 'Inter', sans-serif);
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 700;
   display: flex;
   align-items: center;
@@ -418,6 +419,7 @@ onUnmounted(() => {
   color: var(--ink, #14171c);
   text-decoration: none;
   font-weight: 600;
+  font-size: var(--text-sm);
   transition: color var(--transition-fast, 0.15s ease);
 }
 
@@ -428,15 +430,15 @@ onUnmounted(() => {
 
 .id-tag {
   font-family: var(--font-mono, monospace);
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: var(--slate, #6b7280);
   background: #f3f1ec;
-  padding: 2px 6px;
-  border-radius: 3px;
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm, 4px);
 }
 
 .company-tag {
-  font-size: 13px;
+  font-size: var(--text-sm);
   color: var(--ink, #14171c);
 }
 

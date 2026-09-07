@@ -194,7 +194,7 @@ const submitForm = async () => {
 }
 
 .drawer-header {
-    padding: 24px 32px;
+    padding: var(--space-lg) var(--space-xl);
     border-bottom: 1px solid var(--line);
     display: flex;
     justify-content: space-between;
@@ -202,15 +202,15 @@ const submitForm = async () => {
 }
 
 .drawer-header h2 {
-    font-family: 'Fraunces', Georgia, serif;
+    font-family: var(--font-display, 'Fraunces', Georgia, serif);
     font-weight: 500;
-    font-size: 22px;
+    font-size: var(--text-xl);
     margin: 0;
     color: var(--ink);
 }
 
 .drawer-body {
-    padding: 32px;
+    padding: var(--space-xl);
     flex: 1;
     overflow-y: auto;
 }
@@ -218,8 +218,8 @@ const submitForm = async () => {
 .form-grid {
     display: grid;
     grid-template-columns: 1fr;
-    gap: 20px;
-    margin-bottom: 24px;
+    gap: var(--space-lg);
+    margin-bottom: var(--space-lg);
 }
 
 .form-row {
@@ -228,26 +228,26 @@ const submitForm = async () => {
 }
 
 .form-row label {
-    font-family: 'IBM Plex Mono', monospace;
-    font-size: 11px;
+    font-family: var(--font-mono);
+    font-size: var(--text-xs);
     text-transform: uppercase;
     color: var(--slate);
-    margin-bottom: 6px;
+    margin-bottom: var(--space-xs);
 }
 
 .pill-group {
     display: flex;
-    gap: 10px;
+    gap: var(--space-sm);
 }
 
 .pill {
     flex: 1;
     text-align: center;
-    font-size: 13px;
+    font-size: var(--text-xs);
     font-weight: 500;
-    padding: 9px 0;
+    padding: var(--space-sm) 0;
     border: 1px solid var(--line);
-    border-radius: var(--radius);
+    border-radius: var(--radius-sm, 4px);
     cursor: pointer;
     color: var(--slate);
     transition: 0.2s ease;
@@ -265,26 +265,26 @@ const submitForm = async () => {
 
 .form-actions {
     display: flex;
-    gap: 12px;
-    margin-top: 24px;
+    gap: var(--space-sm);
+    margin-top: var(--space-lg);
 }
 
 .btn-secondary {
-    font-family: 'Inter', sans-serif;
+    font-family: var(--font-body);
     font-weight: 600;
-    font-size: 14px;
-    color: #6b7280;
+    font-size: var(--text-sm);
+    color: var(--slate);
     background: transparent;
-    border: 1px solid #e4e1d8;
-    border-radius: 3px;
-    padding: 12px 24px;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-sm, 4px);
+    padding: var(--space-sm) var(--space-lg);
     cursor: pointer;
     transition: all 0.2s ease;
 }
 
 .btn-secondary:hover {
     background: #ece9e2;
-    color: #14171c;
+    color: var(--ink);
 }
 
 .btn-primary:disabled,

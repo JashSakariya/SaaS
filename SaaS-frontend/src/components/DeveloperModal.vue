@@ -185,12 +185,12 @@ const handleSubmit = () => {
   align-items: center;
   justify-content: center;
   z-index: 9999;
-  padding: 16px;
+  padding: var(--space-md);
 }
 
 .modal-card {
   background: var(--surface, #ffffff);
-  border-radius: var(--radius-xl, 12px);
+  border-radius: var(--radius-lg, 12px);
   box-shadow: var(--shadow-lg, 0 20px 40px rgba(20, 23, 28, 0.16));
   width: 100%;
   max-width: 480px;
@@ -201,7 +201,7 @@ const handleSubmit = () => {
 }
 
 .modal-header {
-  padding: 20px 24px;
+  padding: var(--space-md) var(--space-lg);
   border-bottom: 1px solid var(--line, #e4e1d8);
   display: flex;
   align-items: center;
@@ -211,7 +211,7 @@ const handleSubmit = () => {
 
 .modal-title {
   font-family: var(--font-display, 'Fraunces', Georgia, serif);
-  font-size: 18px;
+  font-size: var(--text-lg);
   font-weight: 600;
   color: var(--ink, #14171c);
   margin: 0;
@@ -222,7 +222,7 @@ const handleSubmit = () => {
   border: none;
   color: var(--slate, #6b7280);
   cursor: pointer;
-  padding: 4px;
+  padding: var(--space-xs);
   border-radius: var(--radius-sm, 4px);
   display: flex;
   align-items: center;
@@ -236,21 +236,21 @@ const handleSubmit = () => {
 }
 
 .modal-body {
-  padding: 24px;
+  padding: var(--space-lg);
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: var(--space-md);
 }
 
 .form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-xs);
 }
 
 .form-row {
   display: flex;
-  gap: 16px;
+  gap: var(--space-md);
 }
 
 .form-group.col {
@@ -259,7 +259,7 @@ const handleSubmit = () => {
 
 .form-label {
   font-family: var(--font-body);
-  font-size: 13px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: var(--ink, #14171c);
 }
@@ -270,13 +270,13 @@ const handleSubmit = () => {
 
 .form-input {
   width: 100%;
-  height: 40px;
+  height: 38px;
   background: var(--paper, #fbfaf6);
   border: 1px solid var(--line, #e4e1d8);
-  border-radius: var(--radius-md, 6px);
-  padding: 0 14px;
+  border-radius: var(--radius-sm, 4px);
+  padding: 0 var(--space-md);
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: var(--text-sm);
   color: var(--ink, #14171c);
   outline: none;
   box-sizing: border-box;
@@ -296,13 +296,13 @@ const handleSubmit = () => {
 
 .form-select {
   width: 100%;
-  height: 40px;
+  height: 38px;
   background: var(--paper, #fbfaf6);
   border: 1px solid var(--line, #e4e1d8);
-  border-radius: var(--radius-md, 6px);
-  padding: 0 36px 0 14px;
+  border-radius: var(--radius-sm, 4px);
+  padding: 0 var(--space-xl) 0 var(--space-md);
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: var(--text-sm);
   color: var(--ink, #14171c);
   outline: none;
   appearance: none;
@@ -319,7 +319,7 @@ const handleSubmit = () => {
 
 .chevron-icon {
   position: absolute;
-  right: 12px;
+  right: var(--space-sm);
   top: 50%;
   transform: translateY(-50%);
   pointer-events: none;
@@ -327,17 +327,17 @@ const handleSubmit = () => {
 }
 
 .modal-footer {
-  margin-top: 8px;
+  margin-top: var(--space-sm);
   display: flex;
   justify-content: flex-end;
-  padding-top: 16px;
+  padding-top: var(--space-md);
   border-top: 1px solid var(--line, #e4e1d8);
 }
 
 .modal-actions {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 .btn-theme-secondary {
@@ -345,9 +345,9 @@ const handleSubmit = () => {
   background: #ffffff;
   border: 1px solid var(--line, #e4e1d8);
   color: var(--slate, #6b7280);
-  padding: 8px 18px;
-  border-radius: var(--radius-md, 6px);
-  font-size: 13.5px;
+  padding: 6px var(--space-md);
+  border-radius: var(--radius-sm, 4px);
+  font-size: var(--text-sm);
   font-weight: 500;
   cursor: pointer;
   transition: all var(--transition-fast, 0.15s ease);
@@ -364,9 +364,9 @@ const handleSubmit = () => {
   background: var(--forest, #0e5c4a);
   border: 1px solid var(--forest, #0e5c4a);
   color: #ffffff;
-  padding: 8px 20px;
-  border-radius: var(--radius-md, 6px);
-  font-size: 13.5px;
+  padding: 6px var(--space-md);
+  border-radius: var(--radius-sm, 4px);
+  font-size: var(--text-sm);
   font-weight: 600;
   cursor: pointer;
   transition: all var(--transition-fast, 0.15s ease);

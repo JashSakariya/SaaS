@@ -7,14 +7,14 @@
 .task-form-group {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-xs);
 }
 
 .form-label,
 .project-form-label,
 .task-form-label {
   font-family: var(--font-mono, 'IBM Plex Mono', monospace);
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -25,7 +25,7 @@
 .project-form-row,
 .task-form-row {
   display: flex;
-  gap: 16px;
+  gap: var(--space-md);
 }
 
 .form-group.col,
@@ -48,8 +48,8 @@
   background: var(--paper, #fbfaf6);
   border: 1px solid var(--line, #e4e1d8);
   border-radius: var(--radius-md, 6px);
-  padding: 10px 14px;
-  font-size: 14px;
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--text-sm);
   color: var(--ink, #14171c);
   outline: none;
   font-family: var(--font-body, system-ui, -apple-system, sans-serif);
@@ -95,14 +95,14 @@
 
 .date-input-wrapper .calendar-icon {
   position: absolute;
-  right: 14px;
+  right: var(--space-md);
   color: var(--slate, #6b7280);
   pointer-events: none;
 }
 
 .select-input-wrapper .chevron-icon {
   position: absolute;
-  right: 14px;
+  right: var(--space-md);
   color: var(--slate, #6b7280);
   pointer-events: none;
 }
@@ -113,7 +113,7 @@
   appearance: none;
   -webkit-appearance: none;
   -moz-appearance: none;
-  padding-right: 36px;
+  padding-right: var(--space-xl);
   cursor: pointer;
 }
 
@@ -126,5 +126,5 @@
 
 .date-input {
   color-scheme: light;
-  padding-right: 36px;
+  padding-right: var(--space-xl);
 }
