@@ -8,7 +8,7 @@
           <line x1="9" y1="3" x2="9" y2="21"></line>
         </svg>
       </div>
-      <span class="brand-title">Ledger</span>
+      <span class="brand-title">Handle</span>
     </div>
 
     <!-- Sidebar Navigation -->
@@ -39,7 +39,7 @@
             <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
             <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
           </svg>
-          <svg v-else-if="item.label === 'Orders'" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <svg v-else-if="item.label === 'Invoices'" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path>
             <line x1="3" y1="6" x2="21" y2="6"></line>
             <path d="M16 10a4 4 0 0 1-8 0"></path>
@@ -71,7 +71,7 @@ const navItems = ref([
   { label: 'Dashboard', path: '/dashboard' },
   { label: 'Clients', path: '/clients' },
   { label: 'Employees', path: '/developers' },
-  { label: 'Orders', path: '/' },
+  { label: 'Invoices', path: '/invoices' },
   { label: 'Payments', path: '/' },
   { label: 'Reports', path: '/' },
   { label: 'Settings', path: '/' },
