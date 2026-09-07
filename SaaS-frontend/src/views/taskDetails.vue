@@ -51,12 +51,21 @@
     <!-- Top Navigation Header -->
     <div class="nav-header">
       <router-link :to="`/clients/${clientId}/projects/${projectId}`" class="back-link">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="19" y1="12" x2="5" y2="12"></line>
           <polyline points="12 19 5 12 12 5"></polyline>
         </svg>
-        Back to project "{{ projectData.title || 'Project' }}"
+        Back to Tasks
       </router-link>
+      <div class="breadcrumb">
+        <router-link to="/clients" class="breadcrumb-link">Clients</router-link>
+        <span class="sep">/</span>
+        <router-link :to="`/clients/${clientId}`" class="breadcrumb-link">{{ clientData.name || 'Client' }}</router-link>
+        <span class="sep">/</span>
+        <router-link :to="`/clients/${clientId}/projects/${projectId}`" class="breadcrumb-link">{{ projectData.title || 'Project' }}</router-link>
+        <span class="sep">/</span>
+        <span class="current">{{ taskData.title || 'Task' }}</span>
+      </div>
     </div>
 
     <!-- Loading State -->
@@ -248,7 +257,7 @@
                 type="submit" 
                 class="btn-primary post-btn" 
                 :disabled="!newCommentText.trim() || isPostingComment"
-              >
+                >
                 {{ isPostingComment ? 'Adding...' : 'Add note' }}
               </button>
             </div>
@@ -431,8 +440,8 @@ const postComment = async () => {
   try {
     const payload = {
       content: newCommentText.value.trim(),
-      text: newCommentText.value.trim(),
-      developer_id: newCommentDevId.value || null,
+      // text: newCommentText.value.trim(),
+      // developer_id: newCommentDevId.value || null,
       developerId: newCommentDevId.value || null,
       author: localStorage.getItem('userName') || undefined,
     };
@@ -594,6 +603,22 @@ const fetchTaskData = async () => {
   }
 };
 
+const clientData = ref<any>({
+  id: null,
+  name: '',
+});
+
+const fetchClientData = async () => {
+  try {
+    const res = await api.get(`/client/${clientId.value}`);
+    if (res.data?.data) {
+      clientData.value = res.data.data;
+    }
+  } catch (err) {
+    console.error('Error fetching client data:', err);
+  }
+};
+
 const fetchProjectData = async () => {
   try {
     const res = await api.get(`/client/${clientId.value}/projects/${projectId.value}`);
@@ -636,6 +661,7 @@ const confirmDeleteTask = async () => {
 
 onMounted(async () => {
   await Promise.all([
+    fetchClientData(),
     fetchTaskData(),
     fetchProjectData(),
     fetchComments(),
@@ -646,9 +672,9 @@ onMounted(async () => {
 
 <style scoped>
 .task-detail-view {
-  max-width: 900px;
+  max-width: 1100px;
   margin: 0 auto;
-  padding: 0 0 60px;
+  padding: 0 0 var(--space-2xl);
   font-family: var(--font-body);
   color: var(--ink);
 }
@@ -656,42 +682,42 @@ onMounted(async () => {
 .task-content-layout {
   display: flex;
   flex-direction: column;
-  gap: 24px;
+  gap: var(--space-xl);
 }
 
 /* Task Hero Card */
 .task-hero-card {
-  padding: 24px 28px;
+  padding: var(--space-lg);
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  gap: 20px;
+  gap: var(--space-lg);
 }
 
 .task-hero-left {
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-sm);
   flex: 1;
 }
 
 .task-title-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-sm);
   flex-wrap: wrap;
 }
 
 .task-title-heading {
   font-family: var(--font-display, 'Fraunces', Georgia, serif);
-  font-size: 24px;
+  font-size: var(--text-xl);
   font-weight: 600;
   color: var(--ink, #14171c);
   margin: 0;
 }
 
 .task-project-subtext {
-  font-size: 13.5px;
+  font-size: var(--text-sm);
   color: var(--slate, #6b7280);
   margin: 0;
 }
@@ -709,47 +735,47 @@ onMounted(async () => {
 .task-meta-pills {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-sm);
   flex-wrap: wrap;
-  margin-top: 4px;
+  margin-top: var(--space-xs);
 }
 
 .task-hero-actions {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-sm);
 }
 
 /* Comments Card */
 .comments-card {
-  padding: 24px 28px;
+  padding: var(--space-lg);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: var(--space-lg);
 }
 
 .comments-header {
   border-bottom: 1px solid var(--line, #e4e1d8);
-  padding-bottom: 14px;
+  padding-bottom: var(--space-md);
 }
 
 .comments-title-wrap {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-sm);
   color: var(--ink);
 }
 
 .comments-title {
   font-family: var(--font-display, 'Fraunces', Georgia, serif);
-  font-size: 18px;
+  font-size: var(--text-lg);
   font-weight: 600;
   margin: 0;
 }
 
 .comments-count {
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: var(--text-xs);
   color: var(--slate);
 }
 
@@ -757,29 +783,29 @@ onMounted(async () => {
 .comments-list {
   display: flex;
   flex-direction: column;
-  gap: 18px;
+  gap: var(--space-md);
 }
 
 .no-comments-prompt {
-  font-size: 13.5px;
+  font-size: var(--text-sm);
   color: var(--slate);
-  padding: 12px 0;
+  padding: var(--space-md) 0;
 }
 
 .comment-item {
   display: flex;
   align-items: flex-start;
-  gap: 14px;
+  gap: var(--space-md);
 }
 
 .comment-avatar {
-  width: 32px;
-  height: 32px;
+  width: var(--space-xl);
+  height: var(--space-xl);
   border-radius: 50%;
   background: var(--info-soft, #e0f2fe);
   color: var(--info, #0369a1);
   font-weight: 700;
-  font-size: 13px;
+  font-size: var(--text-xs);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -791,36 +817,36 @@ onMounted(async () => {
   flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-xs);
 }
 
 .comment-top-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 10px;
+  gap: var(--space-sm);
 }
 
 .comment-meta {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-sm);
 }
 
 .comment-author {
-  font-size: 13.5px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--ink);
 }
 
 .comment-time {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: var(--slate);
 }
 
 .comment-message {
-  font-size: 14px;
+  font-size: var(--text-sm);
   color: var(--ink-soft, #2b2f36);
   line-height: 1.5;
 }
@@ -833,14 +859,14 @@ onMounted(async () => {
 .btn-action-trigger {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
+  gap: var(--space-xs);
   background: var(--paper, #fbfaf6);
   border: 1px solid var(--line, #e4e1d8);
   color: var(--ink, #14171c);
   font-family: var(--font-body);
-  font-size: 11px;
+  font-size: var(--text-xs);
   font-weight: 600;
-  padding: 4px 8px;
+  padding: var(--space-xs) var(--space-sm);
   border-radius: var(--radius-sm, 4px);
   cursor: pointer;
   transition: all var(--transition-fast, 0.15s ease);
@@ -873,7 +899,7 @@ onMounted(async () => {
   border: 1px solid var(--line, #e4e1d8);
   border-radius: var(--radius-md, 6px);
   box-shadow: var(--shadow-md, 0 4px 16px rgba(20, 23, 28, 0.08));
-  padding: 4px;
+  padding: var(--space-xs);
   display: flex;
   flex-direction: column;
   gap: 2px;
@@ -882,11 +908,11 @@ onMounted(async () => {
 .dropdown-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 6px 10px;
+  gap: var(--space-sm);
+  padding: 6px var(--space-sm);
   border-radius: var(--radius-sm, 4px);
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 500;
   color: var(--ink, #14171c);
   background: transparent;
@@ -912,19 +938,19 @@ onMounted(async () => {
 
 /* Comment Inline Edit */
 .comment-edit-box {
-  margin-top: 6px;
+  margin-top: var(--space-xs);
   display: flex;
   flex-direction: column;
-  gap: 8px;
+  gap: var(--space-sm);
 }
 
 .comment-edit-textarea {
   width: 100%;
   background: var(--paper, #fbfaf6);
   border: 1px solid var(--line, #e4e1d8);
-  border-radius: 6px;
-  padding: 8px 12px;
-  font-size: 13.5px;
+  border-radius: var(--radius-sm, 4px);
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--text-sm);
   font-family: var(--font-body);
   color: var(--ink);
   outline: none;
@@ -943,16 +969,16 @@ onMounted(async () => {
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 8px;
+  gap: var(--space-sm);
 }
 
 .btn-cancel-sm {
   background: transparent;
   border: 1px solid var(--line, #e4e1d8);
   color: var(--slate, #6b7280);
-  padding: 5px 12px;
-  border-radius: 4px;
-  font-size: 12px;
+  padding: 6px var(--space-md);
+  border-radius: var(--radius-sm, 4px);
+  font-size: var(--text-xs);
   font-weight: 500;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -967,9 +993,9 @@ onMounted(async () => {
   background: var(--forest, #0e5c4a);
   border: 1px solid var(--forest, #0e5c4a);
   color: #ffffff;
-  padding: 5px 14px;
-  border-radius: 4px;
-  font-size: 12px;
+  padding: 6px var(--space-md);
+  border-radius: var(--radius-sm, 4px);
+  font-size: var(--text-xs);
   font-weight: 600;
   cursor: pointer;
   transition: all 0.15s ease;
@@ -996,9 +1022,9 @@ onMounted(async () => {
 .meta-category-badge {
   display: inline-flex;
   align-items: center;
-  padding: 1px 6px;
-  border-radius: 3px;
-  font-size: 10.5px;
+  padding: 2px 6px;
+  border-radius: var(--radius-sm, 4px);
+  font-size: var(--text-xs);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.03em;
@@ -1064,43 +1090,43 @@ onMounted(async () => {
 .comment-developer-badge {
   display: inline-flex;
   align-items: center;
-  gap: 5px;
-  font-size: 11.5px;
+  gap: 6px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: var(--forest, #0e5c4a);
   background: var(--forest-soft, #e7f0ed);
-  padding: 2px 8px;
-  border-radius: 4px;
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-sm, 4px);
 }
 
 .dot-indicator {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
   border-radius: 50%;
   background: currentColor;
 }
 
 /* Add Activity Note Form */
 .comment-form-container {
-  margin-top: 8px;
-  padding-top: 18px;
+  margin-top: var(--space-sm);
+  padding-top: var(--space-md);
   border-top: 1px solid var(--line, #e4e1d8);
 }
 
 .comment-form-box {
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: var(--space-sm);
 }
 
 .note-dev-select-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: var(--space-sm);
 }
 
 .note-dev-label {
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: var(--slate, #6b7280);
   font-weight: 500;
 }
@@ -1109,9 +1135,9 @@ onMounted(async () => {
   background: var(--paper, #fbfaf6);
   border: 1px solid var(--line, #e4e1d8);
   border-radius: var(--radius-sm, 4px);
-  padding: 4px 10px;
+  padding: var(--space-xs) var(--space-sm);
   font-family: var(--font-body);
-  font-size: 12px;
+  font-size: var(--text-xs);
   color: var(--ink);
   outline: none;
   cursor: pointer;
@@ -1126,16 +1152,16 @@ onMounted(async () => {
 .comment-input-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 .comment-input {
   flex: 1;
   background: var(--paper, #fbfaf6);
   border: 1px solid var(--line, #e4e1d8);
-  border-radius: 6px;
-  padding: 10px 14px;
-  font-size: 13.5px;
+  border-radius: var(--radius-sm, 4px);
+  padding: var(--space-sm) var(--space-md);
+  font-size: var(--text-sm);
   color: var(--ink);
   outline: none;
   font-family: var(--font-body);
@@ -1149,6 +1175,6 @@ onMounted(async () => {
 }
 
 .post-btn {
-  padding: 10px 22px;
+  padding: var(--space-sm) var(--space-lg);
 }
 </style>

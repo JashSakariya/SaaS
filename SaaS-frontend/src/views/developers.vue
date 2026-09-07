@@ -558,27 +558,27 @@ onUnmounted(() => {
 .developers-view {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 0 0 60px;
+  padding: 0 0 var(--space-2xl);
 }
 
 .page-header {
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 24px;
+  margin-bottom: var(--space-lg);
 }
 
 .page-title {
   font-family: var(--font-display, 'Fraunces', Georgia, serif);
   font-weight: 500;
-  font-size: 28px;
-  margin: 0 0 4px;
+  font-size: var(--text-2xl);
+  margin: 0 0 var(--space-xs);
   color: var(--ink, #14171c);
 }
 
 .subtitle {
   color: var(--slate, #6b7280);
-  font-size: 14px;
+  font-size: var(--text-sm);
   margin: 0;
 }
 
@@ -586,8 +586,8 @@ onUnmounted(() => {
 .filter-pills-row {
   display: flex;
   align-items: center;
-  gap: 8px;
-  margin-bottom: 20px;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-lg);
   flex-wrap: wrap;
 }
 
@@ -595,10 +595,10 @@ onUnmounted(() => {
   background: var(--surface, #ffffff);
   border: 1px solid var(--line, #e4e1d8);
   color: var(--slate, #6b7280);
-  padding: 6px 14px;
+  padding: 6px var(--space-md);
   border-radius: 9999px;
   font-family: var(--font-body);
-  font-size: 12.5px;
+  font-size: var(--text-xs);
   font-weight: 500;
   cursor: pointer;
   transition: all var(--transition-fast, 0.15s ease);
@@ -621,18 +621,18 @@ onUnmounted(() => {
 .dev-profile-cell {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 .dev-avatar {
-  width: 32px;
-  height: 32px;
+  width: var(--space-xl);
+  height: var(--space-xl);
   border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
   font-family: var(--font-body, 'Inter', sans-serif);
-  font-size: 12px;
+  font-size: var(--text-xs);
   font-weight: 700;
   flex-shrink: 0;
 }
@@ -698,7 +698,7 @@ onUnmounted(() => {
 }
 
 .dev-name-text {
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--ink, #14171c);
 }
@@ -707,9 +707,9 @@ onUnmounted(() => {
 .category-pill {
   display: inline-flex;
   align-items: center;
-  padding: 3px 9px;
-  border-radius: 4px;
-  font-size: 11.5px;
+  padding: 2px var(--space-sm);
+  border-radius: var(--radius-sm, 4px);
+  font-size: var(--text-xs);
   font-weight: 600;
   font-family: var(--font-body);
 }

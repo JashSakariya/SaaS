@@ -52,12 +52,19 @@
     <!-- Top Navigation Header -->
     <div class="nav-header">
       <router-link :to="`/clients/${clientId}`" class="back-link">
-        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
           <line x1="19" y1="12" x2="5" y2="12"></line>
           <polyline points="12 19 5 12 12 5"></polyline>
         </svg>
-        Back to {{ clientData.name || 'Client' }}
+        Back to Projects
       </router-link>
+      <div class="breadcrumb">
+        <router-link to="/clients" class="breadcrumb-link">Clients</router-link>
+        <span class="sep">/</span>
+        <router-link :to="`/clients/${clientId}`" class="breadcrumb-link">{{ clientData.name || 'Client' }}</router-link>
+        <span class="sep">/</span>
+        <span class="current">{{ projectData.title || 'Project' }}</span>
+      </div>
     </div>
 
     <!-- Loading State -->
@@ -598,68 +605,70 @@ watch(
 .project-detail-view {
   max-width: 1100px;
   margin: 0 auto;
-  padding: 0 0 60px;
+  padding: 0 0 var(--space-2xl);
   font-family: var(--font-body);
   color: var(--ink);
 }
 
 /* Project Hero Card */
 .project-hero-card {
-  padding: 24px 28px;
+  padding: var(--space-lg);
+  border-radius: var(--radius-md, 8px);
   display: flex;
   align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 24px;
-  gap: 20px;
+  margin-bottom: var(--space-xl);
+  gap: var(--space-md);
 }
 
 .hero-left {
   display: flex;
   align-items: flex-start;
-  gap: 18px;
+  gap: var(--space-md);
   flex: 1;
 }
 
 .project-hero-info {
   display: flex;
   flex-direction: column;
-  gap: 6px;
+  gap: var(--space-xs);
   flex: 1;
 }
 
 .project-title-row {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-sm);
   flex-wrap: wrap;
 }
 
 .project-title-heading {
   font-family: var(--font-display, 'Fraunces', Georgia, serif);
-  font-size: 22px;
+  font-size: var(--text-xl);
   font-weight: 600;
   color: var(--ink, #14171c);
   margin: 0;
 }
 
 .project-description-text {
-  font-size: 13.5px;
+  font-size: var(--text-sm);
   color: var(--slate, #6b7280);
   line-height: 1.5;
-  margin: 2px 0 6px;
+  margin: var(--space-xs) 0 var(--space-sm);
 }
 
 .project-meta-pills {
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-sm);
   flex-wrap: wrap;
-  margin-top: 4px;
+  margin-top: var(--space-xs);
 }
 
 .client-link-underline {
   color: var(--forest, #0e5c4a);
   font-weight: 600;
+  font-size: var(--text-sm);
   text-decoration: none;
 }
 
@@ -671,13 +680,13 @@ watch(
 .developer-assigned-tag {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--space-xs);
 }
 
 .category-pill.mini {
-  font-size: 10px;
-  padding: 1px 6px;
-  border-radius: 3px;
+  font-size: var(--text-xs);
+  padding: var(--space-xs) var(--space-sm);
+  border-radius: var(--radius-sm, 4px);
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.03em;

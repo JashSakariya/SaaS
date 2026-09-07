@@ -124,30 +124,6 @@ const onLogin = async () => {
 </script>
 
 <style scoped>
-@import url('https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap');
-
-:root {
-  --ink: #14171c;
-  --paper: #fbfaf6;
-  --surface: #ffffff;
-  --line: #e4e1d8;
-  --forest: #0e5c4a;
-  --forest-dark: #0a4638;
-  --forest-soft: #e7f0ed;
-  --gold: #b8872f;
-  --slate: #6b7280;
-  --danger: #a3372c;
-  --danger-soft: #f6e9e7;
-  --font-display: 'Fraunces', Georgia, serif;
-  --font-body: 'Inter', -apple-system, sans-serif;
-  --font-mono: 'IBM Plex Mono', monospace;
-  --radius: 3px;
-}
-
-* {
-  box-sizing: border-box;
-}
-
 .auth-shell {
   min-height: 100vh;
   display: grid;
@@ -159,7 +135,7 @@ const onLogin = async () => {
 .auth-panel {
   background: var(--ink);
   color: #f2f0ea;
-  padding: 56px 56px 40px;
+  padding: var(--space-2xl);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -168,7 +144,7 @@ const onLogin = async () => {
 
 .brand-mark {
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: var(--text-xs);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--gold);
@@ -177,13 +153,13 @@ const onLogin = async () => {
 .panel-copy h1 {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: 40px;
-  line-height: 1.18;
-  margin: 28px 0 16px;
+  font-size: var(--text-2xl);
+  line-height: 1.2;
+  margin: var(--space-lg) 0 var(--space-md);
 }
 
 .panel-copy p {
-  font-size: 15px;
+  font-size: var(--text-sm);
   line-height: 1.6;
   color: #c9c6bd;
   max-width: 380px;
@@ -192,19 +168,19 @@ const onLogin = async () => {
 .feature-list {
   list-style: none;
   padding: 0;
-  margin: 40px 0 0;
+  margin: var(--space-xl) 0 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-md);
   border-top: 1px solid rgba(255,255,255,0.12);
-  padding-top: 28px;
+  padding-top: var(--space-lg);
 }
 
 .feature-list li {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 14px;
+  gap: var(--space-sm);
+  font-size: var(--text-sm);
   color: #dedbd2;
 }
 
@@ -217,7 +193,7 @@ const onLogin = async () => {
 
 .panel-foot {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: #6f6d66;
 }
 
@@ -226,7 +202,7 @@ const onLogin = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px;
+  padding: var(--space-xl);
 }
 
 .form-card {
@@ -236,30 +212,30 @@ const onLogin = async () => {
 
 .ledger-label {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--text-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--slate);
-  margin: 0 0 10px;
+  margin: 0 0 var(--space-sm);
 }
 
 .form-card h2 {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: 30px;
-  margin: 0 0 6px;
+  font-size: var(--text-2xl);
+  margin: 0 0 var(--space-xs);
 }
 
 .subtitle {
   color: var(--slate);
-  font-size: 14px;
-  margin: 0 0 24px;
+  font-size: var(--text-sm);
+  margin: 0 0 var(--space-lg);
 }
 
 .tab-group {
   display: flex;
   border-bottom: 1.5px solid var(--line);
-  margin-bottom: 24px;
+  margin-bottom: var(--space-lg);
 }
 
 .tab {
@@ -267,10 +243,10 @@ const onLogin = async () => {
   background: none;
   border: none;
   font-family: var(--font-body);
-  font-size: 14px;
+  font-size: var(--text-sm);
   font-weight: 600;
   color: var(--slate);
-  padding: 10px 0;
+  padding: var(--space-sm) 0;
   cursor: pointer;
   border-bottom: 2px solid transparent;
   margin-bottom: -1.5px;
@@ -285,33 +261,33 @@ const onLogin = async () => {
 .form-error {
   background: var(--danger-soft);
   color: var(--danger);
-  font-size: 13px;
-  padding: 10px 14px;
-  border-radius: var(--radius);
-  margin-bottom: 20px;
+  font-size: var(--text-xs);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm, 4px);
+  margin-bottom: var(--space-lg);
 }
 
 .row {
-  margin-bottom: 20px;
+  margin-bottom: var(--space-lg);
 }
 
 label {
   display: block;
-  font-size: 13px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: var(--ink);
-  margin-bottom: 6px;
+  margin-bottom: var(--space-xs);
 }
 
 .ledger-input {
   width: 100%;
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: var(--text-sm);
   color: var(--ink);
   background: transparent;
   border: none;
   border-bottom: 1.5px solid var(--line);
-  padding: 10px 2px;
+  padding: var(--space-sm) 2px;
   outline: none;
   transition: border-color 0.2s ease;
 }
@@ -323,15 +299,15 @@ label {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  font-size: 13px;
-  margin-bottom: 26px;
+  font-size: var(--text-xs);
+  margin-bottom: var(--space-lg);
 }
 
 .remember {
   display: flex;
   align-items: center;
-  gap: 8px;
-  font-size: 13px;
+  gap: var(--space-sm);
+  font-size: var(--text-xs);
   font-weight: 500;
   color: var(--slate);
 }
@@ -350,12 +326,12 @@ label {
   width: 100%;
   font-family: var(--font-body);
   font-weight: 600;
-  font-size: 15px;
+  font-size: var(--text-sm);
   color: #fff;
   background: var(--forest);
   border: none;
-  border-radius: var(--radius);
-  padding: 14px 20px;
+  border-radius: var(--radius-sm, 4px);
+  padding: var(--space-sm) var(--space-lg);
   cursor: pointer;
   transition: background 0.2s ease;
 }
@@ -366,9 +342,9 @@ label {
 
 .switch-link {
   text-align: center;
-  font-size: 14px;
+  font-size: var(--text-sm);
   color: var(--slate);
-  margin-top: 24px;
+  margin-top: var(--space-lg);
 }
 
 .switch-link a {
@@ -386,10 +362,10 @@ label {
     grid-template-columns: 1fr;
   }
   .auth-panel {
-    padding: 32px;
+    padding: var(--space-xl);
   }
   .panel-copy h1 {
-    font-size: 30px;
+    font-size: var(--text-xl);
   }
   .feature-list {
     display: none;

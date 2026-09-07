@@ -190,7 +190,7 @@ const onSubmit = async () => {
 .auth-panel {
   background: var(--ink);
   color: #f2f0ea;
-  padding: 56px 56px 40px;
+  padding: var(--space-2xl);
   display: flex;
   flex-direction: column;
   justify-content: space-between;
@@ -202,7 +202,7 @@ const onSubmit = async () => {
 
 .brand-mark {
   font-family: var(--font-mono);
-  font-size: 13px;
+  font-size: var(--text-xs);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--gold);
@@ -211,13 +211,13 @@ const onSubmit = async () => {
 .panel-copy h1 {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: 40px;
-  line-height: 1.18;
-  margin: 28px 0 16px;
+  font-size: var(--text-2xl);
+  line-height: 1.2;
+  margin: var(--space-lg) 0 var(--space-md);
 }
 
 .panel-copy p {
-  font-size: 15px;
+  font-size: var(--text-sm);
   line-height: 1.6;
   color: #c9c6bd;
   max-width: 380px;
@@ -226,19 +226,19 @@ const onSubmit = async () => {
 .feature-list {
   list-style: none;
   padding: 0;
-  margin: 40px 0 0;
+  margin: var(--space-xl) 0 0;
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: var(--space-md);
   border-top: 1px solid rgba(255, 255, 255, 0.12);
-  padding-top: 28px;
+  padding-top: var(--space-lg);
 }
 
 .feature-list li {
   display: flex;
   align-items: center;
-  gap: 12px;
-  font-size: 14px;
+  gap: var(--space-sm);
+  font-size: var(--text-sm);
   color: #dedbd2;
 }
 
@@ -251,7 +251,7 @@ const onSubmit = async () => {
 
 .panel-foot {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--text-xs);
   color: #6f6d66;
 }
 
@@ -261,7 +261,7 @@ const onSubmit = async () => {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px;
+  padding: var(--space-xl);
 }
 
 .form-card {
@@ -271,66 +271,66 @@ const onSubmit = async () => {
 
 .ledger-label {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--text-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--slate);
-  margin: 0 0 10px;
+  margin: 0 0 var(--space-sm);
 }
 
 .form-card h2 {
   font-family: var(--font-display);
   font-weight: 500;
-  font-size: 30px;
-  margin: 0 0 6px;
+  font-size: var(--text-2xl);
+  margin: 0 0 var(--space-xs);
 }
 
 .subtitle {
   color: var(--slate);
-  font-size: 14px;
-  margin: 0 0 28px;
+  font-size: var(--text-sm);
+  margin: 0 0 var(--space-lg);
 }
 
 .form-error {
   background: var(--danger-soft);
   color: var(--danger);
-  font-size: 13px;
-  padding: 10px 14px;
-  border-radius: var(--radius);
-  margin-bottom: 20px;
+  font-size: var(--text-xs);
+  padding: var(--space-sm) var(--space-md);
+  border-radius: var(--radius-sm, 4px);
+  margin-bottom: var(--space-lg);
 }
 
 .row {
-  margin-bottom: 20px;
+  margin-bottom: var(--space-lg);
 }
 
 .row-split {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 16px;
+  gap: var(--space-md);
 }
 
 .row-split .row {
-  margin-bottom: 20px;
+  margin-bottom: var(--space-lg);
 }
 
 label {
   display: block;
-  font-size: 13px;
+  font-size: var(--text-xs);
   font-weight: 600;
   color: var(--ink);
-  margin-bottom: 6px;
+  margin-bottom: var(--space-xs);
 }
 
 .ledger-input {
   width: 100%;
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: var(--text-sm);
   color: var(--ink);
   background: transparent;
   border: none;
   border-bottom: 1.5px solid var(--line);
-  padding: 10px 2px;
+  padding: var(--space-sm) 2px;
   outline: none;
   transition: border-color 0.2s ease;
 }
@@ -341,17 +341,17 @@ label {
 
 .pill-group {
   display: flex;
-  gap: 10px;
+  gap: var(--space-sm);
 }
 
 .pill {
   flex: 1;
   text-align: center;
-  font-size: 13px;
+  font-size: var(--text-xs);
   font-weight: 500;
-  padding: 9px 0;
+  padding: var(--space-sm) 0;
   border: 1px solid var(--line);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm, 4px);
   cursor: pointer;
   color: var(--slate);
   transition: 0.2s ease;
@@ -369,15 +369,15 @@ label {
 
 .submit-btn {
   width: 100%;
-  margin-top: 8px;
+  margin-top: var(--space-sm);
   font-family: var(--font-body);
   font-weight: 600;
-  font-size: 15px;
+  font-size: var(--text-sm);
   color: #fff;
   background: var(--forest);
   border: none;
-  border-radius: var(--radius);
-  padding: 14px 20px;
+  border-radius: var(--radius-sm, 4px);
+  padding: var(--space-sm) var(--space-lg);
   cursor: pointer;
   transition: background 0.2s ease;
 }
@@ -388,9 +388,9 @@ label {
 
 .switch-link {
   text-align: center;
-  font-size: 14px;
+  font-size: var(--text-sm);
   color: var(--slate);
-  margin-top: 24px;
+  margin-top: var(--space-lg);
 }
 
 .switch-link a {
@@ -409,11 +409,11 @@ label {
   }
 
   .auth-panel {
-    padding: 32px;
+    padding: var(--space-xl);
   }
 
   .panel-copy h1 {
-    font-size: 30px;
+    font-size: var(--text-xl);
   }
 
   .feature-list {

@@ -84,7 +84,7 @@ const navItems = ref([
   width: 220px;
   background: var(--paper);
   border-right: 1px solid var(--line);
-  padding: 24px 0;
+  padding: var(--space-lg) 0;
   display: flex;
   flex-direction: column;
   height: 100vh;
@@ -95,26 +95,26 @@ const navItems = ref([
 .sidebar-brand {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 0 24px 24px;
+  gap: var(--space-sm);
+  padding: 0 var(--space-lg) var(--space-lg);
   border-bottom: 1px solid var(--line);
-  margin-bottom: 20px;
+  margin-bottom: var(--space-lg);
 }
 
 .brand-icon {
   display: inline-flex;
   justify-content: center;
   align-items: center;
-  width: 32px;
-  height: 32px;
+  width: var(--space-xl);
+  height: var(--space-xl);
   background: var(--forest-soft);
   color: var(--forest);
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm, 4px);
 }
 
 .brand-title {
-  font-family: 'Fraunces', Georgia, serif;
-  font-size: 20px;
+  font-family: var(--font-display, 'Fraunces', Georgia, serif);
+  font-size: var(--text-lg);
   font-weight: 600;
   color: var(--ink);
   letter-spacing: -0.01em;
@@ -124,22 +124,22 @@ const navItems = ref([
 .sidebar-nav {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: var(--space-xs);
 }
 
 /* Navigation Link Items */
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 12px;
-  padding: 10px 16px;
-  margin: 0 12px;
-  font-family: 'Inter', sans-serif;
-  font-size: 14px;
+  gap: var(--space-sm);
+  padding: var(--space-sm) var(--space-md);
+  margin: 0 var(--space-sm);
+  font-family: var(--font-body, 'Inter', sans-serif);
+  font-size: var(--text-sm);
   font-weight: 500;
   color: var(--slate);
   text-decoration: none;
-  border-radius: var(--radius);
+  border-radius: var(--radius-sm, 4px);
   border: 1px solid transparent;
   cursor: pointer;
   transition: all 0.2s ease;

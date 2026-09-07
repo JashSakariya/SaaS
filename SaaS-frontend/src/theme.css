@@ -21,6 +21,22 @@
   --danger: #a3372c;
   --danger-soft: #f6e9e7;
 
+  /* Spacing Scale */
+  --space-xs: 4px;
+  --space-sm: 8px;
+  --space-md: 16px;
+  --space-lg: 24px;
+  --space-xl: 32px;
+  --space-2xl: 48px;
+
+  /* Typography Scale */
+  --text-xs: 12px;
+  --text-sm: 14px;
+  --text-base: 16px;
+  --text-lg: 20px;
+  --text-xl: 24px;
+  --text-2xl: 32px;
+
   /* Type */
   --font-display: 'Fraunces', Georgia, serif;
   --font-body: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
@@ -44,7 +60,7 @@ body {
 /* Shared eyebrow / mono label style, used for stat labels, tabs, nav */
 .ledger-label {
   font-family: var(--font-mono);
-  font-size: 11px;
+  font-size: var(--text-xs);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--slate);
@@ -54,12 +70,12 @@ body {
 .btn-primary {
   font-family: var(--font-body);
   font-weight: 600;
-  font-size: 15px;
+  font-size: var(--text-sm);
   color: #fff;
   background: var(--forest);
   border: none;
   border-radius: var(--radius);
-  padding: 13px 20px;
+  padding: var(--space-md) var(--space-lg);
   cursor: pointer;
   transition: background 0.2s ease;
 }
@@ -71,12 +87,12 @@ body {
 .ledger-input {
   width: 100%;
   font-family: var(--font-body);
-  font-size: 15px;
+  font-size: var(--text-sm);
   color: var(--ink);
   background: transparent;
   border: none;
   border-bottom: 1.5px solid var(--line);
-  padding: 10px 2px;
+  padding: var(--space-sm) var(--space-xs);
   outline: none;
   transition: border-color 0.2s ease;
 }

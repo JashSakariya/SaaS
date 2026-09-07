@@ -17,16 +17,18 @@ export default class TaskComment extends BaseModel {
   public author: string | null
 
   @column()
-  public content: string
+  public text: string
+
+  
 
   // Keep text getter/setter for compatibility
-  public get text(): string {
-    return this.content
-  }
+  // public get text(): string {
+  //   return this.content
+  // }
 
-  public set text(val: string) {
-    this.content = val
-  }
+  // public set text(val: string) {
+  //   this.content = val
+  // }
 
   @column.dateTime({ autoCreate: true })
   public createdAt: DateTime

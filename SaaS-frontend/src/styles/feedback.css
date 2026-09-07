@@ -5,16 +5,16 @@
 /* Toast Notification Popup */
 .toast-popup {
   position: fixed;
-  bottom: 24px;
-  right: 24px;
+  bottom: var(--space-lg);
+  right: var(--space-lg);
   background: var(--ink, #14171c);
   color: #ffffff;
-  padding: 12px 18px;
+  padding: var(--space-sm) var(--space-md);
   border-radius: var(--radius-md, 8px);
-  font-size: 13px;
-  display: flex;
+  font-size: var(--text-sm);
+  display: inline-flex;
   align-items: center;
-  gap: 8px;
+  gap: var(--space-sm);
   box-shadow: var(--shadow-lg);
   z-index: 1300;
 }
@@ -22,18 +22,19 @@
 /* Loading States & Spinner */
 .loading-state {
   text-align: center;
-  padding: 60px 0;
+  padding: var(--space-2xl) 0;
   color: var(--slate);
+  font-size: var(--text-sm);
 }
 
 .spinner {
-  width: 32px;
-  height: 32px;
+  width: var(--space-xl);
+  height: var(--space-xl);
   border: 3px solid var(--line, #e4e1d8);
   border-top-color: var(--forest, #0e5c4a);
   border-radius: 50%;
   animation: spin 0.8s linear infinite;
-  margin: 0 auto 12px;
+  margin: 0 auto var(--space-sm);
 }
 
 @keyframes spin {
@@ -42,7 +43,7 @@
 
 /* Empty State Card */
 .empty-state-container {
-  padding: 48px 24px;
+  padding: var(--space-2xl) var(--space-lg);
   text-align: center;
 }
 
@@ -52,39 +53,40 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 12px;
+  gap: var(--space-sm);
 }
 
 .empty-icon-wrapper {
-  width: 60px;
-  height: 60px;
+  width: var(--space-2xl);
+  height: var(--space-2xl);
   border-radius: 50%;
   background: var(--forest-soft, #e7f0ed);
   color: var(--forest, #0e5c4a);
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 4px;
+  margin-bottom: var(--space-xs);
 }
 
 .empty-state-card h3 {
   font-family: var(--font-display, 'Fraunces', Georgia, serif);
-  font-size: 18px;
+  font-size: var(--text-lg);
   margin: 0;
   color: var(--ink);
 }
 
 .empty-state-card p {
-  font-size: 14px;
+  font-size: var(--text-sm);
   color: var(--slate);
-  margin: 0 0 12px;
+  margin: 0 0 var(--space-sm);
   line-height: 1.5;
 }
 
 .no-search-results {
-  padding: 40px 20px;
+  padding: var(--space-2xl) var(--space-lg);
   text-align: center;
   color: var(--slate);
+  font-size: var(--text-sm);
 }
 
 /* Global Transitions */
@@ -97,3 +99,4 @@
 .fade-leave-to {
   opacity: 0;
 }
+
