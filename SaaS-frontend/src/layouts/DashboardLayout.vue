@@ -10,7 +10,7 @@
         <div class="topbar-left">
           <span class="workspace-badge">
             <span class="status-dot"></span>
-            Ledger Workspace
+            Workspace
           </span>
         </div>
         <div class="topbar-right">
