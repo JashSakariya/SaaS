@@ -96,7 +96,9 @@ export default class InvoicesController {
 
     public async updateStatus({ params, request, response }: HttpContextContract) {
         try {
-            const status = request.input('status') as InvoiceStatus
+            const rawStatus = request.input('status') || request.body()?.status
+            const status = (typeof rawStatus === 'string' ? rawStatus.toLowerCase().trim() : '') as InvoiceStatus
+
             if (!status || !['draft', 'sent', 'paid'].includes(status)) {
                 return response.status(400).json({
                     success: false,

@@ -377,7 +377,20 @@
                 </div>
                 <div class="doc-detail-row">
                   <span class="detail-label">Status:</span>
-                  <span class="detail-val capitalize">{{ selectedInvoice.status || 'draft' }}</span>
+                  <div class="status-badge-container">
+                    <button 
+                      type="button" 
+                      class="status-pill status-pill-btn" 
+                      :class="getStatusClass(selectedInvoice.status)"
+                      @click.stop="toggleStatusMenu($event, selectedInvoice)"
+                      title="Click to update status"
+                    >
+                      <span class="capitalize">{{ selectedInvoice.status || 'draft' }}</span>
+                      <svg class="status-chevron" width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+                        <polyline points="6 9 12 15 18 9"></polyline>
+                      </svg>
+                    </button>
+                  </div>
                 </div>
               </div>
             </div>
@@ -652,16 +665,27 @@ const changeStatus = async (inv: Invoice, newStatus: 'draft' | 'sent' | 'paid') 
 
   try {
     const res = await api.patch(`/invoices/${inv.id}/status`, { status: newStatus })
-    if (res.data?.data) {
-      Object.assign(inv, res.data.data)
+    const updated = res.data?.data
+    if (updated) {
+      Object.assign(inv, updated)
+      // Sync list state if inv was selectedInvoice or vice versa
+      const matched = invoices.value.find(i => i.id === inv.id)
+      if (matched && matched !== inv) {
+        Object.assign(matched, updated)
+      }
+      if (selectedInvoice.value && selectedInvoice.value.id === inv.id && selectedInvoice.value !== inv) {
+        Object.assign(selectedInvoice.value, updated)
+      }
     }
     toast.success(`Status updated to "${newStatus}"`)
-  } catch (error) {
+  } catch (error: any) {
     inv.status = oldStatus
     console.error('Failed to update status:', error)
-    toast.error('Failed to update status')
+    const errMsg = error.response?.data?.message || error.message || 'Failed to update status'
+    toast.error(errMsg)
   }
 }
+
 
 // Details modal logic
 const openInvoiceDetails = async (inv: Invoice) => {

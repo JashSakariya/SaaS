@@ -47,6 +47,7 @@ Route.group(() => {
     Route.put('/:id', 'InvoicesController.update')       // update invoice
     Route.delete('/:id', 'InvoicesController.destroy')   // delete invoice
     Route.patch('/:id/status', 'InvoicesController.updateStatus')   // status change
+    Route.put('/:id/status', 'InvoicesController.updateStatus')     // status change fallback
     Route.get('/:id/pdf', 'InvoicesController.downloadPdf')          // PDF download
     Route.post('/:id/send-email', 'InvoicesController.sendEmail')    // email bhejna
 }).prefix('/invoices')
