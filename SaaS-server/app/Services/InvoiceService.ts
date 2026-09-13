@@ -65,7 +65,30 @@ export default class InvoiceService {
     const trx = await Database.transaction()
 
     try {
-      // 1. Compute totalAmount and line item amounts
+      // 1. Generate sequential invoice number: INV<year><0001>
+      const currentYear = DateTime.now().year
+      const prefix = `INV${currentYear}`
+
+      const lastInvoice = await Invoice.query()
+        .useTransaction(trx)
+        .where('invoice_number', 'like', `${prefix}%`)
+        .orderBy('id', 'desc')
+        .first()
+
+      let nextSeq = 1
+      if (lastInvoice && lastInvoice.invoiceNumber) {
+        const match = lastInvoice.invoiceNumber.match(new RegExp(`^${prefix}(\\d+)$`))
+        if (match && match[1]) {
+          const parsed = parseInt(match[1], 10)
+          if (!isNaN(parsed)) {
+            nextSeq = parsed + 1
+          }
+        }
+      }
+
+      const invoiceNumber = `${prefix}${String(nextSeq).padStart(4, '0')}`
+
+      // 2. Compute totalAmount and line item amounts
       let totalAmount = 0
       const formattedLineItems = (data.lineItems || []).map((item) => {
         const qty = Number(item.quantity) || 1
@@ -81,10 +104,10 @@ export default class InvoiceService {
         }
       })
 
-      // 2. Create the Invoice record
+      // 3. Create the Invoice record (always auto-generated, ignores any client-supplied invoice_number)
       const invoice = new Invoice()
       invoice.clientId = data.clientId
-      invoice.invoiceNumber = data.invoice_number || data.invoiceNumber || `INV-${Date.now()}`
+      invoice.invoiceNumber = invoiceNumber
       invoice.dueDate = typeof data.dueDate === 'string' ? DateTime.fromISO(data.dueDate) : data.dueDate
       invoice.status = data.status || 'draft'
       invoice.totalAmount = totalAmount
@@ -93,15 +116,15 @@ export default class InvoiceService {
       invoice.useTransaction(trx)
       await invoice.save()
 
-      // 3. Create associated line items
+      // 4. Create associated line items
       if (formattedLineItems.length > 0) {
         await invoice.related('lineItems').createMany(formattedLineItems)
       }
 
-      // 4. Commit transaction
+      // 5. Commit transaction
       await trx.commit()
 
-      // 5. Preload relationships for response
+      // 6. Preload relationships for response
       await invoice.load('client')
       await invoice.load('lineItems')
 
@@ -124,9 +147,7 @@ export default class InvoiceService {
       if (data.clientId !== undefined) {
         invoice.clientId = data.clientId
       }
-      if (data.invoice_number !== undefined || data.invoiceNumber !== undefined) {
-        invoice.invoiceNumber = data.invoice_number || data.invoiceNumber || invoice.invoiceNumber
-      }
+      // Note: invoiceNumber is immutable and never updated after creation
       if (data.dueDate !== undefined) {
         invoice.dueDate = typeof data.dueDate === 'string' ? DateTime.fromISO(data.dueDate) : data.dueDate
       }

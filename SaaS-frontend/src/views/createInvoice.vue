@@ -53,16 +53,14 @@
             </div>
           </div>
 
-          <!-- Invoice Number -->
-          <div class="form-group col">
+          <!-- Read-only Invoice Number (Edit Mode Only) -->
+          <div v-if="isEdit && existingInvoiceNumber" class="form-group col">
             <label class="form-label">Invoice Number</label>
-            <input 
-              type="text" 
-              v-model="payload.invoice_number" 
-              class="form-input" 
-              placeholder="e.g. INV-0012" 
-            />
+            <div class="readonly-text-field">
+              {{ existingInvoiceNumber }}
+            </div>
           </div>
+
 
           <!-- Due Date -->
           <div class="form-group col">
@@ -260,9 +258,10 @@ const isSubmitting = ref(false)
 const invoiceId = computed(() => route.params.id as string | undefined)
 const isEdit = computed(() => !!invoiceId.value)
 
+const existingInvoiceNumber = ref('')
+
 const payload = ref({
   clientId: '' as number | string,
-  invoice_number: '',
   dueDate: '',
   notes: '',
   lineItems: [
@@ -294,8 +293,8 @@ const loadInvoiceForEdit = async (id: string | number) => {
     const res = await api.get(`/invoices/${id}`)
     const inv = res.data?.data
     if (inv) {
+      existingInvoiceNumber.value = inv.invoiceNumber || inv.invoice_number || ''
       payload.value.clientId = inv.clientId || inv.client_id || ''
-      payload.value.invoice_number = inv.invoiceNumber || inv.invoice_number || ''
       
       const rawDate = inv.dueDate || inv.due_date
       if (rawDate) {
@@ -350,8 +349,9 @@ const submitInvoice = async () => {
   try {
     isSubmitting.value = true
     const body = {
-      ...payload.value,
       clientId: Number(payload.value.clientId),
+      dueDate: payload.value.dueDate,
+      notes: payload.value.notes,
       lineItems: validItems
     }
 
@@ -634,6 +634,20 @@ onMounted(async () => {
   justify-content: flex-end;
   align-items: center;
   gap: var(--space-md);
+}
+
+.readonly-text-field {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  padding: 0 var(--space-md);
+  background: var(--paper, #fbfaf6);
+  border: 1px solid var(--line, #e4e1d8);
+  border-radius: var(--radius-md, 6px);
+  font-family: var(--font-mono);
+  font-weight: 600;
+  font-size: var(--text-sm);
+  color: var(--ink, #14171c);
 }
 
 @media (max-width: 768px) {
