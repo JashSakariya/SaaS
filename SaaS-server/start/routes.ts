@@ -38,5 +38,16 @@ Route.put('/developers/:id', 'DevelopersController.update')
 Route.delete('/developers/:id', 'DevelopersController.destroy')
 
 
+//invoice fetch, store, get, update, delete
 
-
+Route.group(() => {
+    Route.get('/', 'InvoicesController.index')           // list all invoices
+    Route.post('/', 'InvoicesController.store')          // create invoice
+    Route.get('/:id', 'InvoicesController.show')         // view one invoice
+    Route.put('/:id', 'InvoicesController.update')       // update invoice
+    Route.delete('/:id', 'InvoicesController.destroy')   // delete invoice
+    Route.patch('/:id/status', 'InvoicesController.updateStatus')   // status change
+    Route.put('/:id/status', 'InvoicesController.updateStatus')     // status change fallback
+    Route.get('/:id/pdf', 'InvoicesController.downloadPdf')          // PDF download
+    Route.post('/:id/send-email', 'InvoicesController.sendEmail')    // email bhejna
+}).prefix('/invoices')

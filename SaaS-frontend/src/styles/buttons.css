@@ -310,9 +310,16 @@
   color: var(--gold, #b8872f) !important;
 }
 
+.actions-dropdown .dropdown-item.download-btn:hover,
+.dropdown-item.download-btn:hover {
+  background: var(--info-soft, #e0f2fe) !important;
+  color: var(--info, #0369a1) !important;
+}
+
 .actions-dropdown .dropdown-item.delete-btn:hover,
 .dropdown-item.delete-btn:hover {
   background: var(--danger-soft, #f6e9e7) !important;
   color: var(--danger, #a3372c) !important;
 }
+
 
