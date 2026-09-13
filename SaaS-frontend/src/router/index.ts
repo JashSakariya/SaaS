@@ -12,6 +12,7 @@ import ProjectDetails from '@/views/projectDetails.vue'
 import TaskDetails from '@/views/taskDetails.vue'
 import Developers from '@/views/developers.vue'
 import Invoices from '@/views/invoices.vue'
+import CreateInvoice from '@/views/createInvoice.vue'
 
 
 const router = createRouter({
@@ -57,6 +58,16 @@ const router = createRouter({
           path: 'invoices',
           name: 'invoices',
           component: Invoices,
+        },
+        {
+          path: 'invoices/new',
+          name: 'new-invoice',
+          component: CreateInvoice,
+        },
+        {
+          path: 'invoices/edit/:id',
+          name: 'edit-invoice',
+          component: CreateInvoice,
         },
 
         {
