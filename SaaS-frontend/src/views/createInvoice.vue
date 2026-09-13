@@ -299,7 +299,7 @@ const loadInvoiceForEdit = async (id: string | number) => {
       
       const rawDate = inv.dueDate || inv.due_date
       if (rawDate) {
-        payload.value.dueDate = new Date(rawDate).toISOString().split('T')[0]
+        payload.value.dueDate = new Date(rawDate).toISOString().split('T')[0] || ''
       }
 
       payload.value.notes = inv.notes || ''

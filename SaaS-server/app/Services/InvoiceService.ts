@@ -1,5 +1,7 @@
 import { DateTime } from 'luxon'
 import Database from '@ioc:Adonis/Lucid/Database'
+import View from '@ioc:Adonis/Core/View'
+import puppeteer from 'puppeteer'
 import Invoice from 'App/Models/Invoice'
 import InvoiceLineItem from 'App/Models/InvoiceLineItem'
 
@@ -204,8 +206,68 @@ export default class InvoiceService {
   /**
    * Generate / download PDF stream or buffer
    */
-  public async generatePdf(id: number) {
-    // TODO: Load invoice and generate PDF template
+  public static async generatePdf(id: number): Promise<Buffer> {
+    const invoice = await Invoice.query()
+      .where('id', id)
+      .preload('client')
+      .preload('lineItems')
+      .firstOrFail()
+
+    const formattedInvoice = {
+      ...invoice.toJSON(),
+      invoiceNumber: invoice.invoiceNumber || `INV-${invoice.id}`,
+      issueDate: invoice.createdAt ? invoice.createdAt.toFormat('yyyy-LL-dd') : '—',
+      createdAtFormatted: invoice.createdAt ? invoice.createdAt.toFormat('yyyy-LL-dd') : '—',
+      dueDateFormatted: invoice.dueDate ? (typeof invoice.dueDate === 'string' ? invoice.dueDate : invoice.dueDate.toFormat('yyyy-LL-dd')) : '—',
+      status: invoice.status,
+      totalAmountFormatted: Number(invoice.totalAmount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+      notes: invoice.notes,
+    }
+
+    const formattedLineItems = (invoice.lineItems || []).map((item) => ({
+      description: item.description,
+      quantity: item.quantity,
+      unitPrice: item.unitPrice,
+      unitPriceFormatted: Number(item.unitPrice || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+      amount: item.amount,
+      amountFormatted: Number(item.amount || 0).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }),
+    }))
+
+    const clientData = invoice.client ? invoice.client.toJSON() : { name: 'Valued Client' }
+
+    const html = await View.render('invoices/pdf', {
+      invoice: formattedInvoice,
+      client: clientData,
+      lineItems: formattedLineItems,
+      business: {
+        name: 'Business Name',
+        email: 'business@example.com',
+        phone: '+91 9876543210',
+      },
+    })
+
+    const browser = await puppeteer.launch({
+      headless: true,
+      args: ['--no-sandbox', '--disable-setuid-sandbox'],
+    })
+
+    try {
+      const page = await browser.newPage()
+      await page.setContent(html, { waitUntil: 'domcontentloaded' })
+      const pdfUint8Array = await page.pdf({
+        format: 'A4',
+        printBackground: true,
+        margin: {
+          top: '15mm',
+          right: '15mm',
+          bottom: '20mm',
+          left: '15mm',
+        },
+      })
+      return Buffer.from(pdfUint8Array)
+    } finally {
+      await browser.close()
+    }
   }
 
   /**

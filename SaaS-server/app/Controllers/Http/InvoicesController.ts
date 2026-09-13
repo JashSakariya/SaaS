@@ -152,4 +152,32 @@ export default class InvoicesController {
             })
         }
     }
+
+    public async downloadPdf({ params, response }: HttpContextContract) {
+        try {
+            const invoice = await InvoiceService.getInvoiceById(params.id)
+            const pdfBuffer = await InvoiceService.generatePdf(params.id)
+
+            const filename = `invoice-${invoice.invoiceNumber || invoice.id}.pdf`
+            response.header('Content-Type', 'application/pdf')
+            response.header('Content-Disposition', `attachment; filename="${filename}"`)
+
+            return response.send(pdfBuffer)
+        } catch (error) {
+            if (error.code === 'E_ROW_NOT_FOUND') {
+                return response.status(404).json({
+                    success: false,
+                    message: `Invoice with ID ${params.id} not found`,
+                })
+            }
+
+            console.error('Error generating invoice PDF:', error)
+            return response.status(500).json({
+                success: false,
+                message: 'Failed to generate invoice PDF',
+                error: error.message || error,
+            })
+        }
+    }
 }
+

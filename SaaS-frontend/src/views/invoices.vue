@@ -282,6 +282,20 @@
 
         <button 
           type="button" 
+          @click="downloadPdf(activeInvoice); closeDropdown();" 
+          class="dropdown-item download-btn"
+        >
+          <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+            <polyline points="7 10 12 15 17 10"></polyline>
+            <line x1="12" y1="15" x2="12" y2="3"></line>
+          </svg>
+          Download PDF
+        </button>
+
+
+        <button 
+          type="button" 
           @click="openDeleteConfirm(activeInvoice); closeDropdown();" 
           class="dropdown-item delete-btn"
         >
@@ -296,81 +310,124 @@
       </div>
     </Teleport>
 
-    <!-- Invoice Details Modal -->
+    <!-- Invoice Details Preview Modal -->
     <Teleport to="body">
       <div v-if="showDetailsModal && selectedInvoice" class="modal-backdrop" @click="showDetailsModal = false">
-        <div class="modal-card invoice-details-modal" @click.stop>
-          <div class="modal-header">
-            <div>
-              <p class="ledger-label">Invoice Details</p>
-              <h3 class="modal-title">{{ selectedInvoice.invoiceNumber || selectedInvoice.invoice_number || `#INV-${selectedInvoice.id}` }}</h3>
-            </div>
-            <button type="button" class="btn-close-modal" @click="showDetailsModal = false">×</button>
-          </div>
-
-          <div class="modal-body">
-            <div class="invoice-info-grid">
-              <div class="info-block">
-                <span class="info-label">Client</span>
-                <span class="info-val font-semibold">{{ selectedInvoice.client?.name || '—' }}</span>
-              </div>
-              <div class="info-block">
-                <span class="info-label">Due Date</span>
-                <span class="info-val">{{ formatDate(selectedInvoice.dueDate || selectedInvoice.due_date) }}</span>
-              </div>
-              <div class="info-block">
-                <span class="info-label">Status</span>
-                <span class="status-pill" :class="getStatusClass(selectedInvoice.status)">
-                  {{ selectedInvoice.status }}
-                </span>
-              </div>
-              <div class="info-block">
-                <span class="info-label">Total Amount</span>
-                <span class="amount-mono text-forest">₹{{ formatAmount(selectedInvoice.totalAmount ?? selectedInvoice.total_amount) }}</span>
-              </div>
-            </div>
-
-            <div v-if="selectedInvoice.notes" class="invoice-notes-block">
-              <span class="info-label">Notes</span>
-              <p class="notes-text">{{ selectedInvoice.notes }}</p>
-            </div>
-
-            <!-- Line Items Table -->
-            <div class="modal-line-items">
-              <h4 class="section-title">Line Items</h4>
-              <table class="ledger-table items-preview-table">
-                <thead>
-                  <tr>
-                    <th>Description</th>
-                    <th class="text-center">Qty</th>
-                    <th class="text-right">Unit Price</th>
-                    <th class="text-right">Amount</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr v-for="item in selectedInvoice.lineItems" :key="item.id">
-                    <td>{{ item.description }}</td>
-                    <td class="text-center">{{ item.quantity }}</td>
-                    <td class="text-right font-mono">₹{{ formatAmount(item.unitPrice ?? item.unit_price) }}</td>
-                    <td class="text-right font-mono font-semibold">₹{{ formatAmount(item.amount) }}</td>
-                  </tr>
-                  <tr v-if="!selectedInvoice.lineItems || selectedInvoice.lineItems.length === 0">
-                    <td colspan="4" class="text-center text-slate">No line items recorded</td>
-                  </tr>
-                </tbody>
-              </table>
+        <div class="modal-card invoice-preview-modal" @click.stop>
+          <div class="modal-header-actions">
+            <span class="preview-badge">Invoice Preview</span>
+            <div class="modal-actions-right">
+              <button 
+                type="button" 
+                class="btn-secondary btn-sm" 
+                @click="downloadPdf(selectedInvoice)"
+              >
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"></path>
+                  <polyline points="7 10 12 15 17 10"></polyline>
+                  <line x1="12" y1="15" x2="12" y2="3"></line>
+                </svg>
+                Download PDF
+              </button>
+              <router-link :to="`/invoices/edit/${selectedInvoice.id}`" class="btn-secondary btn-sm" @click="showDetailsModal = false">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+                Edit
+              </router-link>
+              <button type="button" class="btn-close-modal" @click="showDetailsModal = false">×</button>
             </div>
           </div>
 
-          <div class="modal-footer modal-footer-split">
-            <router-link :to="`/invoices/edit/${selectedInvoice.id}`" class="btn-secondary" @click="showDetailsModal = false">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 4px;">
-                <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                <path d="M18.5 2.5a2.121 2.121 0 1 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-              </svg>
-              Edit Invoice
-            </router-link>
-            <button type="button" class="btn-primary" @click="showDetailsModal = false">Close</button>
+          <!-- Document Sheet (Matches Mockup) -->
+          <div class="invoice-document-sheet">
+            <!-- Sheet Header -->
+            <div class="doc-header">
+              <div class="doc-brand">
+                <h2 class="brand-title">Business Name</h2>
+                <p class="brand-contact">&nbsp; +91 9876543210</p>
+              </div>
+              <div class="doc-invoice-meta">
+                <h1 class="doc-invoice-heading">INVOICE</h1>
+                <p class="doc-invoice-num">{{ selectedInvoice.invoiceNumber || selectedInvoice.invoice_number || `#INV-${selectedInvoice.id}` }}</p>
+              </div>
+            </div>
+
+            <div class="doc-divider-thick"></div>
+
+            <!-- Billed To & Invoice Details Grid -->
+            <div class="doc-parties-grid">
+              <div class="doc-party-col">
+                <span class="doc-section-label">BILLED TO</span>
+                <p class="doc-client-name">{{ selectedInvoice.client?.name || 'Valued Client' }}</p>
+                <p v-if="selectedInvoice.client?.company_name" class="doc-client-company">{{ selectedInvoice.client?.company_name }}</p>
+                <p v-if="selectedInvoice.client?.email" class="doc-client-email">{{ selectedInvoice.client?.email }}</p>
+              </div>
+
+              <div class="doc-details-col">
+                <span class="doc-section-label">INVOICE DETAILS</span>
+                <div class="doc-detail-row">
+                  <span class="detail-label">Issue date:</span>
+                  <span class="detail-val">{{ formatDate(selectedInvoice.createdAt || selectedInvoice.created_at) }}</span>
+                </div>
+                <div class="doc-detail-row">
+                  <span class="detail-label">Due date:</span>
+                  <span class="detail-val">{{ formatDate(selectedInvoice.dueDate || selectedInvoice.due_date) }}</span>
+                </div>
+                <div class="doc-detail-row">
+                  <span class="detail-label">Status:</span>
+                  <span class="detail-val capitalize">{{ selectedInvoice.status || 'draft' }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Items Table -->
+            <table class="doc-items-table">
+              <thead>
+                <tr>
+                  <th class="col-desc">DESCRIPTION</th>
+                  <th class="col-qty text-center">QTY</th>
+                  <th class="col-price text-right">UNIT PRICE</th>
+                  <th class="col-amount text-right">AMOUNT</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr v-for="item in selectedInvoice.lineItems" :key="item.id">
+                  <td class="col-desc">{{ item.description }}</td>
+                  <td class="col-qty text-center">{{ item.quantity }}</td>
+                  <td class="col-price text-right font-mono">₹{{ formatAmount(item.unitPrice ?? item.unit_price) }}</td>
+                  <td class="col-amount text-right font-mono font-semibold">₹{{ formatAmount(item.amount) }}</td>
+                </tr>
+                <tr v-if="!selectedInvoice.lineItems || selectedInvoice.lineItems.length === 0">
+                  <td colspan="4" class="text-center text-slate py-4">No line items</td>
+                </tr>
+              </tbody>
+            </table>
+
+            <!-- Summary Calculations -->
+            <div class="doc-summary-container">
+              <div class="doc-summary-box">
+                <div class="doc-summary-line">
+                  <span>Subtotal</span>
+                  <span class="font-mono">₹{{ formatAmount(selectedInvoice.totalAmount ?? selectedInvoice.total_amount) }}</span>
+                </div>
+                <div class="doc-summary-line">
+                  <span>Tax (0%)</span>
+                  <span class="font-mono">₹0.00</span>
+                </div>
+                <div class="doc-divider-thin"></div>
+                <div class="doc-summary-line doc-total-due">
+                  <span>Total Due</span>
+                  <span class="font-mono doc-total-num">₹{{ formatAmount(selectedInvoice.totalAmount ?? selectedInvoice.total_amount) }}</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Footer Notes -->
+            <div class="doc-notes-footer">
+              <p>Note : {{ selectedInvoice.notes || 'Payment due within 15 days of receipt. Thank you for your business.' }}</p>
+            </div>
           </div>
         </div>
       </div>
@@ -397,6 +454,9 @@ interface LineItem {
 interface Client {
   id: number
   name: string
+  company_name?: string
+  companyName?: string
+  email?: string
 }
 
 interface Invoice {
@@ -630,8 +690,8 @@ const updateDropdownPosition = () => {
     return
   }
 
-  const dropdownHeight = 110
-  const dropdownWidth = 140
+  const dropdownHeight = 150
+  const dropdownWidth = 150
   const spaceBelow = window.innerHeight - rect.bottom
 
   let topPos: string
@@ -662,6 +722,13 @@ const toggleDropdown = (event: MouseEvent, inv: Invoice) => {
   activeInvoice.value = inv
   activeInvoiceId.value = inv.id
   updateDropdownPosition()
+}
+
+// PDF Download logic
+const downloadPdf = (inv: Invoice | null) => {
+  if (!inv || !inv.id) return
+  const baseURL = api.defaults.baseURL || 'http://127.0.0.1:3334'
+  window.open(`${baseURL}/invoices/${inv.id}/pdf`, '_blank')
 }
 
 // Delete logic
@@ -967,121 +1034,231 @@ onUnmounted(() => {
   justify-content: flex-end;
 }
 
-/* Invoice Details Modal */
-.invoice-details-modal {
-  max-width: 650px;
-  width: 90%;
+/* Invoice Document Preview Modal (Matches Mockup) */
+.invoice-preview-modal {
+  max-width: 680px;
+  width: 95%;
   background: #ffffff;
   border-radius: var(--radius-lg, 12px);
-  padding: var(--space-xl);
+  padding: var(--space-lg) var(--space-xl);
   box-shadow: var(--shadow-xl);
-}
-
-.invoice-info-grid {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: var(--space-md);
-  margin-bottom: var(--space-lg);
-  background: var(--paper, #fbfaf6);
   border: 1px solid var(--line, #e4e1d8);
-  border-radius: var(--radius-md);
-  padding: var(--space-md);
 }
 
-.info-block {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-
-.info-label {
-  font-size: var(--text-xs);
-  color: var(--slate);
-  text-transform: uppercase;
-  font-family: var(--font-mono);
-  letter-spacing: 0.05em;
-}
-
-.info-val {
-  font-size: var(--text-sm);
-  color: var(--ink);
-}
-
-.invoice-notes-block {
-  margin-bottom: var(--space-lg);
-  background: var(--paper);
-  border: 1px solid var(--line);
-  border-radius: var(--radius-md);
-  padding: var(--space-sm) var(--space-md);
-}
-
-.notes-text {
-  font-size: var(--text-sm);
-  color: var(--ink);
-  margin: var(--space-xs) 0 0;
-  white-space: pre-line;
-}
-
-.modal-line-items {
-  margin-top: var(--space-md);
-}
-
-.section-title {
-  font-family: var(--font-display, 'Fraunces', Georgia, serif);
-  font-size: var(--text-base);
-  font-weight: 600;
-  margin: 0 0 var(--space-sm);
-  color: var(--ink);
-}
-
-.items-preview-table {
-  border: 1px solid var(--line);
-  border-radius: var(--radius-sm);
-}
-
-.items-preview-table th {
-  padding: 8px 12px;
-  font-size: var(--text-xs);
-}
-
-.items-preview-table td {
-  padding: 8px 12px;
-  font-size: var(--text-xs);
-}
-
-.btn-close-modal {
-  background: transparent;
-  border: none;
-  font-size: var(--text-2xl);
-  color: var(--slate);
-  cursor: pointer;
-  line-height: 1;
-}
-
-.modal-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  margin-bottom: var(--space-md);
-}
-
-.modal-title {
-  font-family: var(--font-display, 'Fraunces', Georgia, serif);
-  font-size: var(--text-xl);
-  margin: 0;
-  color: var(--ink);
-}
-
-.modal-footer {
-  margin-top: var(--space-lg);
-  display: flex;
-  justify-content: flex-end;
-}
-
-.modal-footer-split {
+.modal-header-actions {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  margin-bottom: var(--space-md);
+  padding-bottom: var(--space-sm);
+  border-bottom: 1px solid var(--line, #e4e1d8);
+}
+
+.preview-badge {
+  font-family: var(--font-mono);
+  font-size: var(--text-xs);
+  color: var(--slate);
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  font-weight: 600;
+}
+
+.modal-actions-right {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+}
+
+.btn-sm {
+  padding: 4px 10px;
+  font-size: var(--text-xs);
+}
+
+.invoice-document-sheet {
+  background: #ffffff;
+  padding: var(--space-md) 0;
+  font-family: var(--font-body);
+  color: #1a1a1a;
+}
+
+.doc-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.brand-title {
+  font-family: var(--font-body);
+  font-size: var(--text-xl);
+  font-weight: 800;
+  color: #111827;
+  margin: 0 0 4px;
+  letter-spacing: -0.02em;
+}
+
+.brand-contact {
+  font-size: var(--text-xs);
+  color: #4b5563;
+  margin: 0;
+}
+
+.doc-invoice-meta {
+  text-align: right;
+}
+
+.doc-invoice-heading {
+  font-family: var(--font-body);
+  font-size: var(--text-2xl);
+  font-weight: 800;
+  color: #111827;
+  letter-spacing: 0.04em;
+  margin: 0;
+}
+
+.doc-invoice-num {
+  font-family: var(--font-mono);
+  font-size: var(--text-sm);
+  color: #4b5563;
+  margin: 4px 0 0;
+  font-weight: 500;
+}
+
+.doc-divider-thick {
+  height: 2px;
+  background: #111827;
+  margin: var(--space-lg) 0;
+}
+
+.doc-parties-grid {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  margin-bottom: var(--space-xl);
+  gap: var(--space-lg);
+}
+
+.doc-section-label {
+  display: block;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: #6b7280;
+  letter-spacing: 0.06em;
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+
+.doc-client-name {
+  font-size: var(--text-sm);
+  font-weight: 700;
+  color: #111827;
+  margin: 0 0 2px;
+}
+
+.doc-client-company,
+.doc-client-email {
+  font-size: var(--text-xs);
+  color: #4b5563;
+  margin: 0 0 2px;
+}
+
+.doc-details-col {
+  text-align: right;
+}
+
+.doc-detail-row {
+  display: flex;
+  justify-content: flex-end;
+  gap: var(--space-sm);
+  font-size: var(--text-xs);
+  margin-bottom: 3px;
+}
+
+.detail-label {
+  color: #4b5563;
+}
+
+.detail-val {
+  color: #111827;
+  font-weight: 500;
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+/* Document Items Table */
+.doc-items-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: var(--space-lg);
+}
+
+.doc-items-table th {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 700;
+  color: #6b7280;
+  letter-spacing: 0.05em;
+  padding: 8px 10px;
+  border-bottom: 1px solid #e5e7eb;
+  background: transparent;
+  text-transform: uppercase;
+}
+
+.doc-items-table td {
+  padding: 12px 10px;
+  border-bottom: 1px solid #f3f4f6;
+  font-size: var(--text-sm);
+  color: #1f2937;
+}
+
+/* Document Summary Box */
+.doc-summary-container {
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: var(--space-xl);
+}
+
+.doc-summary-box {
+  width: 250px;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.doc-summary-line {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: var(--text-sm);
+  color: #4b5563;
+}
+
+.doc-divider-thin {
+  height: 2px;
+  background: #111827;
+  margin: 4px 0;
+}
+
+.doc-total-due {
+  color: #111827;
+  font-weight: 700;
+  font-size: var(--text-base);
+}
+
+.doc-total-num {
+  font-size: var(--text-lg);
+  font-weight: 800;
+  color: #111827;
+}
+
+.doc-notes-footer {
+  padding-top: var(--space-md);
+  border-top: 1px solid #e5e7eb;
+  font-size: var(--text-xs);
+  color: #6b7280;
+  line-height: 1.5;
 }
 
 /* Delete Modal Styling */
