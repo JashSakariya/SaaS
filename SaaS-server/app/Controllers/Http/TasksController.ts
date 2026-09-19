@@ -21,7 +21,8 @@ export default class TasksController {
 
   public async store({ params, request, response }: HttpContextContract) {
     const projectId = params.pid
-    const dueDate = request.input('dueDate') || request.input('due_date') || null
+    const rawDueDate = request.input('dueDate') !== undefined ? request.input('dueDate') : request.input('due_date')
+    const dueDate = rawDueDate && typeof rawDueDate === 'string' && rawDueDate.trim() !== '' ? rawDueDate.trim() : (rawDueDate && typeof rawDueDate !== 'string' ? rawDueDate : null)
     const developerId = request.input('developerId') !== undefined
       ? request.input('developerId')
       : (request.input('developer_id') !== undefined ? request.input('developer_id') : null)
@@ -123,9 +124,9 @@ export default class TasksController {
       if (request.input('status') !== undefined) {
         res.status = request.input('status')
       }
-      const dueDate = request.input('dueDate') !== undefined ? request.input('dueDate') : request.input('due_date')
-      if (dueDate !== undefined) {
-        res.dueDate = dueDate
+      if (request.input('dueDate') !== undefined || request.input('due_date') !== undefined) {
+        const rawDueDate = request.input('dueDate') !== undefined ? request.input('dueDate') : request.input('due_date')
+        res.dueDate = rawDueDate && typeof rawDueDate === 'string' && rawDueDate.trim() !== '' ? rawDueDate.trim() : (rawDueDate && typeof rawDueDate !== 'string' ? rawDueDate : null)
       }
 
       await res.save()

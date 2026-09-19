@@ -12,15 +12,15 @@ export default class ProjectsController {
 
     public async store({ params, request, response }: HttpContextContract) {
         const clientId = params.id
-        const payload = request.only([
-            'title',
-            'description',
-            'status',
-            'dueDate',
-        ])
+        const rawDueDate = request.input('dueDate') !== undefined ? request.input('dueDate') : request.input('due_date')
+        const dueDate = rawDueDate && typeof rawDueDate === 'string' && rawDueDate.trim() !== '' ? rawDueDate.trim() : (rawDueDate && typeof rawDueDate !== 'string' ? rawDueDate : null)
+
         try {
             const res = await ClientProject.create({
-                ...payload,
+                title: request.input('title'),
+                description: request.input('description'),
+                status: request.input('status') || 'planning',
+                dueDate: dueDate,
                 clientId,
             })
 
@@ -67,7 +67,6 @@ export default class ProjectsController {
 
     
     public async update({request,params,response}: HttpContextContract) {
-        const payload = request.only(["title", "description", "status", "dueDate"])
         const clientId = params.id
         const pid = params.pid
         try{
@@ -77,10 +76,19 @@ export default class ProjectsController {
                     message:"Project not found"
                 })
             }
-            res.title = payload.title
-            res.description = payload.description
-            res.status = payload.status
-            res.dueDate = payload.dueDate
+            if (request.input('title') !== undefined) {
+                res.title = request.input('title')
+            }
+            if (request.input('description') !== undefined) {
+                res.description = request.input('description')
+            }
+            if (request.input('status') !== undefined) {
+                res.status = request.input('status')
+            }
+            if (request.input('dueDate') !== undefined || request.input('due_date') !== undefined) {
+                const rawDueDate = request.input('dueDate') !== undefined ? request.input('dueDate') : request.input('due_date')
+                res.dueDate = rawDueDate && typeof rawDueDate === 'string' && rawDueDate.trim() !== '' ? rawDueDate.trim() : (rawDueDate && typeof rawDueDate !== 'string' ? rawDueDate : null)
+            }
             await res.save()
             return response.status(200).json({
                 message:"Project updated successfully",
