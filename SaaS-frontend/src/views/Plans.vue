@@ -145,7 +145,7 @@ const onScroll = () => {
 
 const scrollGrid = (direction: 'left' | 'right') => {
   if (!plansGridRef.value) return;
-  const cardWithGap = 310 + 24; // 334px (approx one card width + gap)
+  const cardWithGap = 255 + 16; // 271px (compact card width + gap)
   plansGridRef.value.scrollBy({
     left: direction === 'left' ? -cardWithGap : cardWithGap,
     behavior: 'smooth'
@@ -200,12 +200,12 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   box-sizing: border-box;
-  padding: 4px 0;
+  padding: 0;
 }
 
 .plans-container {
   width: 100%;
-  max-width: 1400px;
+  max-width: 1240px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -215,7 +215,7 @@ onUnmounted(() => {
 /* Header */
 .welcome-block {
   text-align: center;
-  margin-bottom: 22px;
+  margin-bottom: 14px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -224,23 +224,23 @@ onUnmounted(() => {
 .plan-eyebrow {
   display: inline-flex;
   align-items: center;
-  gap: 7px;
+  gap: 6px;
   font-family: var(--font-mono, monospace);
-  font-size: 11px;
+  font-size: 9.5px;
   font-weight: 600;
   letter-spacing: 0.1em;
   text-transform: uppercase;
   color: var(--slate, #6b7280);
   background: var(--surface, #ffffff);
   border: 1px solid var(--line, #e4e1d8);
-  padding: 4px 12px;
+  padding: 2.5px 8px;
   border-radius: var(--radius, 3px);
-  margin-bottom: 10px;
+  margin-bottom: 6px;
 }
 
 .status-dot {
-  width: 6px;
-  height: 6px;
+  width: 5px;
+  height: 5px;
   border-radius: 50%;
   background: var(--forest, #0e5c4a);
 }
@@ -248,19 +248,19 @@ onUnmounted(() => {
 .welcome-block h1 {
   font-family: var(--font-display, 'Fraunces', Georgia, serif);
   font-weight: 500;
-  font-size: 32px;
+  font-size: 24px;
   line-height: 1.2;
-  margin: 0 0 6px;
+  margin: 0 0 3px;
   color: var(--ink, #14171c);
   letter-spacing: -0.01em;
 }
 
 .subtitle {
   color: var(--slate, #6b7280);
-  font-size: 14.5px;
-  line-height: 1.5;
+  font-size: 13px;
+  line-height: 1.45;
   margin: 0;
-  max-width: 500px;
+  max-width: 440px;
   text-align: center;
 }
 
@@ -270,20 +270,20 @@ onUnmounted(() => {
   border: 1px solid #f0cdc8;
   color: var(--danger, #a3372c);
   border-radius: var(--radius-md, 8px);
-  padding: 12px 18px;
+  padding: 10px 16px;
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 20px;
-  font-size: var(--text-sm, 13.5px);
-  max-width: 760px;
+  margin-bottom: 16px;
+  font-size: var(--text-sm, 13px);
+  max-width: 720px;
   width: 100%;
 }
 
 .error-content {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 8px;
 }
 
 .retry-btn {
@@ -292,8 +292,8 @@ onUnmounted(() => {
   color: var(--danger, #a3372c);
   font-family: var(--font-body, sans-serif);
   font-weight: 600;
-  font-size: 12px;
-  padding: 5px 14px;
+  font-size: 11.5px;
+  padding: 4px 12px;
   border-radius: var(--radius-sm, 4px);
   cursor: pointer;
   transition: all 0.2s ease;
@@ -311,7 +311,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  margin-bottom: 20px;
+  margin-bottom: 14px;
 }
 
 /* Scroll Arrows */
@@ -319,8 +319,8 @@ onUnmounted(() => {
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  width: 42px;
-  height: 42px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: var(--surface, #ffffff);
   border: 1px solid var(--line, #e4e1d8);
@@ -329,7 +329,7 @@ onUnmounted(() => {
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(20, 23, 28, 0.1);
+  box-shadow: 0 4px 12px rgba(20, 23, 28, 0.1);
   z-index: 25;
   transition: all 0.2s ease;
 }
@@ -338,27 +338,27 @@ onUnmounted(() => {
   background: var(--forest-soft, #e7f0ed);
   border-color: var(--forest, #0e5c4a);
   color: var(--forest, #0e5c4a);
-  box-shadow: 0 6px 18px rgba(14, 92, 74, 0.18);
+  box-shadow: 0 6px 16px rgba(14, 92, 74, 0.18);
   transform: translateY(-50%) scale(1.06);
 }
 
 .scroll-arrow-btn.scroll-left {
-  left: 6px;
+  left: -4px;
 }
 
 .scroll-arrow-btn.scroll-right {
-  right: 6px;
+  right: -4px;
 }
 
 /* Plans Grid - centered when few plans, smoothly scrollable when more plans */
 .plans-grid {
   display: flex;
   align-items: stretch;
-  gap: 24px;
+  gap: 16px;
   width: 100%;
   overflow-x: auto;
   overflow-y: hidden;
-  padding: 16px 24px 20px;
+  padding: 12px 14px 14px;
   scroll-behavior: smooth;
   scroll-snap-type: x mandatory;
   box-sizing: border-box;
@@ -378,7 +378,7 @@ onUnmounted(() => {
 
 /* Custom scrollbar styling */
 .plans-grid::-webkit-scrollbar {
-  height: 6px;
+  height: 5px;
 }
 
 .plans-grid::-webkit-scrollbar-track {
@@ -396,17 +396,17 @@ onUnmounted(() => {
 
 /* Skeleton Loading */
 .skeleton-card {
-  flex: 0 0 310px;
-  width: 310px;
-  min-width: 310px;
-  max-width: 310px;
+  flex: 0 0 255px;
+  width: 255px;
+  min-width: 255px;
+  max-width: 265px;
   background: var(--surface, #ffffff);
   border: 1px solid var(--line, #e4e1d8);
   border-radius: var(--radius-md, 8px);
-  padding: 30px 26px;
+  padding: 22px 18px;
   display: flex;
   flex-direction: column;
-  gap: 14px;
+  gap: 12px;
   box-sizing: border-box;
 }
 
@@ -417,35 +417,35 @@ onUnmounted(() => {
 }
 
 .skeleton-line.short {
-  width: 70px;
-  height: 12px;
+  width: 60px;
+  height: 10px;
 }
 
 .skeleton-line.medium {
-  width: 140px;
-  height: 26px;
+  width: 120px;
+  height: 22px;
 }
 
 .skeleton-line.price {
-  width: 110px;
-  height: 42px;
+  width: 90px;
+  height: 34px;
 }
 
 .skeleton-line.button {
   width: 100%;
-  height: 42px;
-  margin: 6px 0;
+  height: 36px;
+  margin: 4px 0;
 }
 
 .skeleton-line.full {
   width: 90%;
-  height: 16px;
+  height: 14px;
 }
 
 .skeleton-divider {
   height: 1px;
   background: var(--line, #e4e1d8);
-  margin: 8px 0;
+  margin: 6px 0;
 }
 
 @keyframes pulse {
@@ -462,15 +462,15 @@ onUnmounted(() => {
   background: var(--surface, #ffffff);
   border: 1px solid var(--line, #e4e1d8);
   border-radius: var(--radius-md, 8px);
-  padding: var(--space-2xl);
+  padding: var(--space-xl);
   text-align: center;
-  max-width: 500px;
+  max-width: 460px;
 }
 
 .empty-desc {
   color: var(--slate, #6b7280);
   font-size: var(--text-sm);
-  margin: 6px 0 0;
+  margin: 4px 0 0;
 }
 
 /* Trust Footer */
@@ -478,17 +478,17 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 16px;
-  margin-top: 0;
+  gap: 14px;
+  margin-top: 2px;
   font-family: var(--font-mono, monospace);
-  font-size: 11.5px;
+  font-size: 11px;
   color: var(--slate, #6b7280);
 }
 
 .trust-item {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: 5px;
 }
 
 .trust-bullet {
@@ -497,8 +497,8 @@ onUnmounted(() => {
 
 @media (max-width: 768px) {
   .plans-grid {
-    padding: 16px 16px 20px;
-    gap: 16px;
+    padding: 10px 12px 14px;
+    gap: 12px;
   }
 
   .scroll-arrow-btn {
@@ -507,7 +507,7 @@ onUnmounted(() => {
 
   .trust-footer {
     flex-direction: column;
-    gap: 6px;
+    gap: 4px;
   }
 
   .trust-bullet {
