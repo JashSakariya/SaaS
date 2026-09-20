@@ -13,7 +13,7 @@ import TaskDetails from '@/views/taskDetails.vue'
 import Developers from '@/views/developers.vue'
 import Invoices from '@/views/invoices.vue'
 import CreateInvoice from '@/views/createInvoice.vue'
-
+import Plans from '@/views/Plans.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -68,6 +68,11 @@ const router = createRouter({
           path: 'invoices/edit/:id',
           name: 'edit-invoice',
           component: CreateInvoice,
+        },
+        {
+          path: 'plans',
+          name: 'plans',
+          component: Plans,
         },
 
         {
