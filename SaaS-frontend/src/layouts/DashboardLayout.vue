@@ -148,7 +148,7 @@ const handleLogout = () => {
 /* Page Content Viewport - lock X overflow and allow Y scroll only */
 .page-content {
   flex: 1;
-  padding: 32px 40px;
+  padding: 20px 28px;
   overflow-y: auto;
   overflow-x: hidden;
   background: var(--paper);

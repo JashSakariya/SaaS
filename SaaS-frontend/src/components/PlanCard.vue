@@ -127,14 +127,14 @@ const parsedFeatures = computed(() => {
 
 <style scoped>
 .plan-card {
-  flex: 0 0 310px;
-  width: 310px;
-  min-width: 310px;
-  max-width: 310px;
+  flex: 0 0 255px;
+  width: 255px;
+  min-width: 255px;
+  max-width: 265px;
   background: var(--surface, #ffffff);
   border: 1px solid var(--line, #e4e1d8);
   border-radius: var(--radius-md, 8px);
-  padding: 30px 26px;
+  padding: 22px 18px;
   display: flex;
   flex-direction: column;
   position: relative;
@@ -152,67 +152,67 @@ const parsedFeatures = computed(() => {
 .plan-card.is-popular {
   border-color: var(--forest, #0e5c4a);
   background: #ffffff;
-  box-shadow: 0 4px 20px rgba(14, 92, 74, 0.08);
+  box-shadow: 0 4px 18px rgba(14, 92, 74, 0.08);
 }
 
 /* Popular ribbon badge */
 .popular-badge {
   position: absolute;
-  top: -12px;
-  right: 20px;
+  top: -10px;
+  right: 14px;
   background: var(--forest, #0e5c4a);
   color: #ffffff;
   font-family: var(--font-mono, monospace);
-  font-size: 10.5px;
+  font-size: 9.5px;
   font-weight: 600;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  padding: 4px 12px;
+  padding: 3px 10px;
   border-radius: 999px;
   display: inline-flex;
   align-items: center;
-  box-shadow: 0 2px 8px rgba(14, 92, 74, 0.25);
+  box-shadow: 0 2px 8px rgba(14, 92, 74, 0.22);
   white-space: nowrap;
 }
 
 /* Card Header */
 .card-header {
-  margin-bottom: 16px;
+  margin-bottom: 12px;
 }
 
 .plan-billing-tag {
   font-family: var(--font-mono, monospace);
-  font-size: 11px;
+  font-size: 10px;
   font-weight: 500;
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--slate, #6b7280);
-  margin: 0 0 6px;
+  margin: 0 0 4px;
 }
 
 .plan-name {
   font-family: var(--font-display, 'Fraunces', Georgia, serif);
-  font-size: 26px;
+  font-size: 21px;
   font-weight: 600;
   color: var(--ink, #14171c);
-  margin: 0 0 6px;
+  margin: 0 0 4px;
   letter-spacing: -0.01em;
-  min-height: 32px;
+  min-height: 26px;
 }
 
 .plan-desc {
   font-family: var(--font-body, sans-serif);
-  font-size: 13.5px;
+  font-size: 12px;
   color: var(--slate, #6b7280);
-  line-height: 1.5;
+  line-height: 1.45;
   margin: 0;
-  min-height: 42px;
+  min-height: 35px;
 }
 
 /* Price Block */
 .price-block {
-  margin-bottom: 18px;
-  min-height: 64px;
+  margin-bottom: 14px;
+  min-height: 52px;
 }
 
 .price-row {
@@ -224,7 +224,7 @@ const parsedFeatures = computed(() => {
 
 .currency-symbol {
   font-family: var(--font-display, 'Fraunces', Georgia, serif);
-  font-size: 24px;
+  font-size: 19px;
   font-weight: 500;
   color: var(--ink, #14171c);
 }
@@ -238,29 +238,29 @@ const parsedFeatures = computed(() => {
 }
 
 .price-value.price-regular {
-  font-size: 38px;
-}
-
-.price-value.price-medium {
   font-size: 30px;
 }
 
-.price-value.price-compact {
+.price-value.price-medium {
   font-size: 24px;
+}
+
+.price-value.price-compact {
+  font-size: 19px;
 }
 
 .billing-period {
   font-family: var(--font-mono, monospace);
-  font-size: 12px;
+  font-size: 11px;
   color: var(--slate, #6b7280);
-  margin-left: 4px;
+  margin-left: 3px;
 }
 
 .tax-note {
   font-family: var(--font-mono, monospace);
-  font-size: 11px;
+  font-size: 10px;
   color: #9ca3af;
-  margin: 5px 0 0;
+  margin: 4px 0 0;
 }
 
 /* Action Button */
@@ -268,8 +268,8 @@ const parsedFeatures = computed(() => {
   width: 100%;
   font-family: var(--font-body, sans-serif);
   font-weight: 600;
-  font-size: 14px;
-  padding: 11px 20px;
+  font-size: 12.5px;
+  padding: 8.5px 14px;
   border-radius: var(--radius-sm, 4px);
   cursor: pointer;
   display: inline-flex;
@@ -311,7 +311,7 @@ const parsedFeatures = computed(() => {
 .card-divider {
   height: 1px;
   background: var(--line, #e4e1d8);
-  margin: 20px 0;
+  margin: 14px 0;
 }
 
 /* Features Section */
@@ -323,11 +323,11 @@ const parsedFeatures = computed(() => {
 
 .features-title {
   font-family: var(--font-mono, monospace);
-  font-size: 11px;
+  font-size: 10px;
   text-transform: uppercase;
   letter-spacing: 0.08em;
   color: var(--slate, #6b7280);
-  margin: 0 0 14px;
+  margin: 0 0 10px;
   font-weight: 600;
 }
 
@@ -337,25 +337,25 @@ const parsedFeatures = computed(() => {
   margin: 0;
   display: flex;
   flex-direction: column;
-  gap: 11px;
+  gap: 8px;
 }
 
 .feature-item {
   display: flex;
   align-items: flex-start;
-  gap: 10px;
+  gap: 8px;
   font-family: var(--font-body, sans-serif);
-  font-size: 13.5px;
+  font-size: 12px;
   color: var(--ink, #14171c);
-  line-height: 1.4;
+  line-height: 1.35;
 }
 
 .check-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 17px;
-  height: 17px;
+  width: 15px;
+  height: 15px;
   background: var(--forest-soft, #e7f0ed);
   color: var(--forest, #0e5c4a);
   border-radius: 50%;
@@ -364,8 +364,8 @@ const parsedFeatures = computed(() => {
 }
 
 .spinner {
-  width: 16px;
-  height: 16px;
+  width: 14px;
+  height: 14px;
   border: 2px solid rgba(255, 255, 255, 0.3);
   border-radius: 50%;
   border-top-color: #ffffff;
