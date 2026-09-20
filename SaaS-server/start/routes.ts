@@ -51,3 +51,29 @@ Route.group(() => {
     Route.get('/:id/pdf', 'InvoicesController.downloadPdf')          // PDF download
     Route.post('/:id/send-email', 'InvoicesController.sendEmail')    // email bhejna
 }).prefix('/invoices')
+
+// plans fetch, store, get, update, delete
+Route.group(() => {
+  Route.get('/', 'PlansController.index')
+  Route.post('/', 'PlansController.store')
+  Route.get('/:id', 'PlansController.show')
+  Route.put('/:id', 'PlansController.update')
+  Route.delete('/:id', 'PlansController.destroy')
+}).prefix('/plans')
+
+// Root & /admin redirects
+Route.get('/', async ({ response }) => {
+  return response.redirect('/admin/plans')
+})
+Route.get('/admin', async ({ response }) => {
+  return response.redirect('/admin/plans')
+})
+
+// Admin Plan Management (Edge Dashboard)
+Route.group(() => {
+  Route.get('/', 'AdminPlansController.index')
+  Route.post('/', 'AdminPlansController.store')
+  Route.post('/:id/update', 'AdminPlansController.update')
+  Route.post('/:id/delete', 'AdminPlansController.destroy')
+}).prefix('/admin/plans')
+
