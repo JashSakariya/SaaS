@@ -77,3 +77,10 @@ Route.group(() => {
   Route.post('/:id/delete', 'AdminPlansController.destroy')
 }).prefix('/admin/plans')
 
+// Payments & Checkout
+Route.group(() => {
+  Route.get('/subscription/current', 'PaymentsController.currentSubscription')
+  Route.post('/create-order', 'PaymentsController.createOrder')
+  Route.post('/verify', 'PaymentsController.verifyPayment')
+}).prefix('/payments')
+

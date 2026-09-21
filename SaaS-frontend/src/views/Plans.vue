@@ -53,7 +53,7 @@
           </svg>
         </button>
 
-        <!-- Plans Grid (Smooth horizontal scroll when more plans) -->
+        <!-- Plans Grid -->
         <div 
           ref="plansGridRef" 
           class="plans-grid"
@@ -63,6 +63,7 @@
             v-for="plan in plans"
             :key="plan.id"
             :plan="plan"
+            :isCurrentPlan="currentActivePlanId === plan.id"
             :loading="processingPlanId === plan.id"
             @select="onPlanSelected"
           />
@@ -114,18 +115,71 @@
         </span>
       </div>
     </div>
+
+    <!-- Success Celebration Modal -->
+    <div v-if="activatedSubscription" class="success-modal-overlay" @click.self="activatedSubscription = null">
+      <div class="success-modal-card">
+        <div class="success-icon-badge">
+          <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+
+        <h3 class="success-title">Subscription Activated!</h3>
+        <p class="success-subtitle">
+          Your payment was securely verified by Razorpay and your plan has been activated.
+        </p>
+
+        <div class="success-details-card">
+          <div class="detail-row">
+            <span class="detail-label">Plan Tier</span>
+            <span class="detail-value highlight">{{ activatedSubscription.planName }}</span>
+          </div>
+          <div class="detail-row">
+            <span class="detail-label">Status</span>
+            <span class="detail-value status-badge">● Active</span>
+          </div>
+          <div class="detail-row" v-if="activatedSubscription.currentPeriodEnd">
+            <span class="detail-label">Valid Until</span>
+            <span class="detail-value">{{ formatDate(activatedSubscription.currentPeriodEnd) }}</span>
+          </div>
+          <div class="detail-row" v-if="activatedSubscription.paymentId">
+            <span class="detail-label">Payment ID</span>
+            <span class="detail-value mono">{{ activatedSubscription.paymentId }}</span>
+          </div>
+        </div>
+
+        <div class="success-modal-actions">
+          <button class="btn-success-close" @click="activatedSubscription = null">
+            Close
+          </button>
+          <button class="btn-success-dashboard" @click="goToDashboard">
+            Go to Dashboard
+          </button>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { ref, onMounted, onUnmounted, nextTick } from 'vue';
+import { useRouter } from 'vue-router';
 import api from '@/services/ApiService';
+import { loadRazorpay } from '@/services/RazorpayLoader';
 import PlanCard, { type PlanData } from '@/components/PlanCard.vue';
 
+const router = useRouter();
 const plans = ref<PlanData[]>([]);
 const loading = ref(true);
 const errorMsg = ref('');
 const processingPlanId = ref<number | null>(null);
+const currentActivePlanId = ref<number | null>(null);
+const activatedSubscription = ref<{
+  planName: string;
+  paymentId?: string;
+  currentPeriodEnd?: string;
+} | null>(null);
 
 const plansGridRef = ref<HTMLElement | null>(null);
 const canScrollLeft = ref(false);
@@ -135,7 +189,6 @@ const updateScrollButtons = () => {
   if (!plansGridRef.value) return;
   const { scrollLeft, scrollWidth, clientWidth } = plansGridRef.value;
   canScrollLeft.value = scrollLeft > 10;
-  // If content extends beyond visible viewport, enable right scroll
   canScrollRight.value = scrollWidth - (scrollLeft + clientWidth) > 10;
 };
 
@@ -145,7 +198,7 @@ const onScroll = () => {
 
 const scrollGrid = (direction: 'left' | 'right') => {
   if (!plansGridRef.value) return;
-  const cardWithGap = 255 + 16; // 271px (compact card width + gap)
+  const cardWithGap = 255 + 16;
   plansGridRef.value.scrollBy({
     left: direction === 'left' ? -cardWithGap : cardWithGap,
     behavior: 'smooth'
@@ -172,18 +225,138 @@ const fetchPlans = async () => {
   }
 };
 
-const onPlanSelected = (plan: PlanData) => {
+/**
+ * Handle user clicking "Choose Plan"
+ */
+const onPlanSelected = async (plan: PlanData) => {
+  if (processingPlanId.value !== null) return;
+  errorMsg.value = '';
   processingPlanId.value = plan.id;
-  console.log('Selected Plan for Checkout:', plan);
-  // Razorpay Checkout integration connects in Part 2!
-  setTimeout(() => {
+
+  try {
+    // 1. Ensure Razorpay Checkout SDK is injected
+    const isLoaded = await loadRazorpay();
+    if (!isLoaded) {
+      errorMsg.value = 'Failed to load Razorpay Checkout SDK. Please check your internet connection.';
+      processingPlanId.value = null;
+      return;
+    }
+
+    // 2. Call backend to create Razorpay order
+    const res = await api.post('/payments/create-order', {
+      planId: plan.id,
+    });
+
+    if (!res.data?.success || !res.data?.data) {
+      throw new Error(res.data?.message || 'Failed to initialize payment order');
+    }
+
+    const orderData = res.data.data;
+
+    // 3. Configure Razorpay Standard Checkout options
+    const options = {
+      key: orderData.keyId,
+      amount: orderData.amount, // in paise
+      currency: orderData.currency || 'INR',
+      name: 'Handle',
+      description: `${plan.name} Plan Subscription`,
+      order_id: orderData.orderId,
+      prefill: {
+        name: orderData.user?.name || localStorage.getItem('userName') || '',
+        email: orderData.user?.email || '',
+      },
+      theme: {
+        color: '#0e5c4a', // Forest green matching Ledger theme
+      },
+      modal: {
+        ondismiss: () => {
+          processingPlanId.value = null;
+          console.log('Payment modal dismissed by user');
+        },
+      },
+      handler: async (response: any) => {
+        // Called by Razorpay when customer completes payment
+        await verifyPayment(response, plan);
+      },
+    };
+
+    // 4. Open Razorpay Checkout modal
+    const rzp = new (window as any).Razorpay(options);
+
+    rzp.on('payment.failed', (failResponse: any) => {
+      processingPlanId.value = null;
+      errorMsg.value = `Payment failed: ${failResponse.error?.description || 'Transaction was declined'}`;
+    });
+
+    rzp.open();
+  } catch (err: any) {
+    console.error('Error starting checkout:', err);
+    errorMsg.value = err.response?.data?.message || err.message || 'Payment initiation failed';
     processingPlanId.value = null;
-    alert(`Selected plan: ${plan.name} (${plan.priceFormatted || '₹' + Math.round(plan.price / 100)}). Ready for Razorpay integration!`);
-  }, 250);
+  }
+};
+
+/**
+ * Send payment credentials to backend for HMAC-SHA256 signature verification
+ */
+const verifyPayment = async (rzpResponse: any, plan: PlanData) => {
+  try {
+    const res = await api.post('/payments/verify', {
+      razorpay_order_id: rzpResponse.razorpay_order_id,
+      razorpay_payment_id: rzpResponse.razorpay_payment_id,
+      razorpay_signature: rzpResponse.razorpay_signature,
+    });
+
+    if (res.data?.success) {
+      currentActivePlanId.value = plan.id;
+      activatedSubscription.value = {
+        planName: plan.name,
+        paymentId: rzpResponse.razorpay_payment_id,
+        currentPeriodEnd: res.data.data?.currentPeriodEnd,
+      };
+    } else {
+      errorMsg.value = res.data?.message || 'Payment verification failed';
+    }
+  } catch (err: any) {
+    console.error('Payment verification error:', err);
+    errorMsg.value = err.response?.data?.message || 'Payment verification failed on server';
+  } finally {
+    processingPlanId.value = null;
+  }
+};
+
+const formatDate = (dateStr?: string) => {
+  if (!dateStr) return '';
+  try {
+    return new Date(dateStr).toLocaleDateString('en-IN', {
+      day: 'numeric',
+      month: 'short',
+      year: 'numeric',
+    });
+  } catch {
+    return dateStr;
+  }
+};
+
+const goToDashboard = () => {
+  activatedSubscription.value = null;
+  router.push('/dashboard');
+};
+
+const fetchCurrentSubscription = async () => {
+  try {
+    const res = await api.get('/payments/subscription/current');
+    if (res.data?.success && res.data?.data) {
+      currentActivePlanId.value = res.data.data.planId || res.data.data.plan_id || null;
+    }
+  } catch (err) {
+    console.warn('Could not fetch active subscription:', err);
+  }
 };
 
 onMounted(() => {
   fetchPlans();
+  fetchCurrentSubscription();
   window.addEventListener('resize', updateScrollButtons);
 });
 
@@ -201,6 +374,7 @@ onUnmounted(() => {
   justify-content: center;
   box-sizing: border-box;
   padding: 0;
+  position: relative;
 }
 
 .plans-container {
@@ -350,7 +524,7 @@ onUnmounted(() => {
   right: -4px;
 }
 
-/* Plans Grid - centered when few plans, smoothly scrollable when more plans */
+/* Plans Grid */
 .plans-grid {
   display: flex;
   align-items: stretch;
@@ -367,8 +541,6 @@ onUnmounted(() => {
   scrollbar-color: var(--line, #e4e1d8) transparent;
 }
 
-/* Auto-centering trick: when total cards width < container width, cards center.
-   When total cards width > container width, cards start at scrollLeft 0 and scroll smoothly without clipping! */
 .plans-grid::before,
 .plans-grid::after {
   content: '';
@@ -495,6 +667,178 @@ onUnmounted(() => {
   color: var(--line, #e4e1d8);
 }
 
+/* ========================================================
+   SUCCESS CELEBRATION MODAL STYLES
+   ======================================================== */
+.success-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(20, 23, 28, 0.55);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+  padding: 20px;
+  animation: fadeIn 0.2s ease-out;
+}
+
+.success-modal-card {
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--line, #e4e1d8);
+  border-radius: 12px;
+  width: 100%;
+  max-width: 440px;
+  padding: 32px 28px;
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.16);
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  animation: slideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.success-icon-badge {
+  width: 56px;
+  height: 56px;
+  border-radius: 50%;
+  background: var(--forest-soft, #e7f0ed);
+  color: var(--forest, #0e5c4a);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 16px;
+  box-shadow: 0 4px 12px rgba(14, 92, 74, 0.15);
+}
+
+.success-title {
+  font-family: var(--font-display, 'Fraunces', Georgia, serif);
+  font-size: 22px;
+  font-weight: 600;
+  color: var(--ink, #14171c);
+  margin: 0 0 6px;
+}
+
+.success-subtitle {
+  font-family: var(--font-body, sans-serif);
+  font-size: 13px;
+  color: var(--slate, #6b7280);
+  line-height: 1.5;
+  margin: 0 0 20px;
+}
+
+.success-details-card {
+  width: 100%;
+  background: #faf9f5;
+  border: 1px solid var(--line, #e4e1d8);
+  border-radius: 8px;
+  padding: 14px 18px;
+  margin-bottom: 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.detail-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 12.5px;
+}
+
+.detail-label {
+  color: var(--slate, #6b7280);
+}
+
+.detail-value {
+  color: var(--ink, #14171c);
+  font-weight: 600;
+}
+
+.detail-value.highlight {
+  color: var(--forest, #0e5c4a);
+  font-family: var(--font-display, 'Fraunces', Georgia, serif);
+  font-size: 14px;
+}
+
+.detail-value.status-badge {
+  background: var(--forest-soft, #e7f0ed);
+  color: var(--forest-dark, #0a4638);
+  font-family: var(--font-mono, monospace);
+  font-size: 10.5px;
+  padding: 2px 8px;
+  border-radius: 999px;
+}
+
+.detail-value.mono {
+  font-family: var(--font-mono, monospace);
+  font-size: 11px;
+  color: var(--slate, #6b7280);
+}
+
+.success-modal-actions {
+  display: flex;
+  width: 100%;
+  gap: 12px;
+}
+
+.btn-success-close {
+  flex: 1;
+  background: var(--surface, #ffffff);
+  border: 1px solid var(--line, #e4e1d8);
+  color: var(--slate, #6b7280);
+  font-family: var(--font-body, sans-serif);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-success-close:hover {
+  background: #f4f2eb;
+  color: var(--ink, #14171c);
+}
+
+.btn-success-dashboard {
+  flex: 1;
+  background: var(--forest, #0e5c4a);
+  border: 1px solid var(--forest, #0e5c4a);
+  color: #ffffff;
+  font-family: var(--font-body, sans-serif);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 10px 16px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-success-dashboard:hover {
+  background: var(--forest-dark, #0a4638);
+  border-color: var(--forest-dark, #0a4638);
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(16px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
 @media (max-width: 768px) {
   .plans-grid {
     padding: 10px 12px 14px;
@@ -502,7 +846,7 @@ onUnmounted(() => {
   }
 
   .scroll-arrow-btn {
-    display: none; /* Mobile users swipe with momentum touch */
+    display: none;
   }
 
   .trust-footer {
