@@ -14,6 +14,7 @@ import Developers from '@/views/developers.vue'
 import Invoices from '@/views/invoices.vue'
 import CreateInvoice from '@/views/createInvoice.vue'
 import Plans from '@/views/Plans.vue'
+import Settings from '@/views/Settings.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -73,6 +74,11 @@ const router = createRouter({
           path: 'plans',
           name: 'plans',
           component: Plans,
+        },
+        {
+          path: 'settings',
+          name: 'settings',
+          component: Settings,
         },
 
         {

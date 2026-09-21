@@ -74,7 +74,7 @@ const navItems = ref([
   { label: 'Invoices', path: '/invoices' },
   { label: 'Plans', path: '/plans' },
   { label: 'Reports', path: '/' },
-  { label: 'Settings', path: '/' },
+  { label: 'Settings', path: '/settings' },
 ]);
 </script>
 
