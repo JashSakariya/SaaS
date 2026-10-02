@@ -23,25 +23,25 @@ const router = createRouter({
     {
       path: '/signup',
       name: 'signup',
-      component: Signup
+      component: Signup,
+      meta: { guestOnly: true },
     },
     {
       path: '/login',
       name: 'login',
-      component: Login
+      component: Login,
+      meta: { guestOnly: true },
     },
 
     // main application
-
     {
       path: '/',
       component: DashboardLayout,
-
+      meta: { requiresAuth: true },
       children: [
         {
           path: '',
           redirect: '/dashboard',
-          // component: Dashboard,
         },
 
         {
@@ -84,7 +84,6 @@ const router = createRouter({
         {
           path: 'clients',
           component: ClientsLayout,
-
           children: [
             {
               path: '',
@@ -102,23 +101,34 @@ const router = createRouter({
               path: ':id/projects/:pid/tasks/:tid',
               component: TaskDetails,
             },
-
-
-          ]
-        }
-      ]
+          ],
+        },
+      ],
     },
-  ]
+    // Catch-all route to redirect unknown paths
+    {
+      path: '/:pathMatch(.*)*',
+      redirect: '/login',
+    },
+  ],
 })
 
 router.beforeEach((to) => {
   const isAuthenticated =
     localStorage.getItem('accessToken') !== null ||
-    localStorage.getItem('refreshToken') !== null;
+    localStorage.getItem('refreshToken') !== null
 
-  if (to.meta.requiresAuth && !isAuthenticated) {
+  const requiresAuth = to.matched.some((record) => record.meta.requiresAuth)
+  const isGuestOnly = to.matched.some((record) => record.meta.guestOnly)
+
+  if (requiresAuth && !isAuthenticated) {
     // If route requires auth and user is not logged in, redirect to login
-    return '/login'
+    return { name: 'login' }
+  }
+
+  if (isGuestOnly && isAuthenticated) {
+    // If user is already logged in and visits login or signup, redirect to dashboard
+    return { name: 'dashboard' }
   }
 })
 
