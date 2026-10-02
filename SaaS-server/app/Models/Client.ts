@@ -1,5 +1,7 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column } from '@ioc:Adonis/Lucid/Orm'
+import { BaseModel, column, hasMany, HasMany } from '@ioc:Adonis/Lucid/Orm'
+import ClientProject from './ClientProject'
+import Invoice from './Invoice'
 
 export default class Client extends BaseModel {
   @column({ isPrimary: true })
@@ -17,7 +19,7 @@ export default class Client extends BaseModel {
   @column()
   public phone: string
 
-  @column()
+  @column({ columnName: 'company_name' })
   public companyName: string
 
   @column.dateTime({ autoCreate: true })
@@ -25,4 +27,10 @@ export default class Client extends BaseModel {
 
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   public updatedAt: DateTime
+
+  @hasMany(() => ClientProject, { foreignKey: 'clientId' })
+  public projects: HasMany<typeof ClientProject>
+
+  @hasMany(() => Invoice, { foreignKey: 'clientId' })
+  public invoices: HasMany<typeof Invoice>
 }
