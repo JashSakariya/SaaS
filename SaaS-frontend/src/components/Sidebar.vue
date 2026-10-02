@@ -3,12 +3,9 @@
     <!-- Sidebar Brand / Logo Header -->
     <div class="sidebar-brand">
       <div class="brand-icon">
-        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-          <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
-          <line x1="9" y1="3" x2="9" y2="21"></line>
-        </svg>
+        <img src="/Jaxora.png" alt="Jaxora" class="brand-logo-img" />
       </div>
-      <span class="brand-title">Handle</span>
+      <span class="brand-title">Jaxora</span>
     </div>
 
     <!-- Sidebar Navigation -->
@@ -110,6 +107,14 @@ const navItems = ref([
   background: var(--forest-soft);
   color: var(--forest);
   border-radius: var(--radius-sm, 4px);
+  overflow: hidden;
+}
+
+.brand-logo-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  border-radius: inherit;
 }
 
 .brand-title {

@@ -2,7 +2,10 @@
   <div class="auth-shell">
     <!-- Left brand panel -->
     <aside class="auth-panel">
-      <div class="brand-mark">MyApp</div>
+      <div class="brand-mark">
+        <img src="/Jaxora.png" alt="Jaxora" class="brand-icon-img" />
+        <span>Jaxora</span>
+      </div>
 
       <div class="panel-copy">
         <h1>Welcome back to<br />the ledger.</h1>
@@ -24,7 +27,7 @@
         </li>
       </ul>
 
-      <div class="panel-foot">© {{ new Date().getFullYear() }} MyApp</div>
+      <div class="panel-foot">© {{ new Date().getFullYear() }} Jaxora</div>
     </aside>
 
     <!-- Right form panel -->
@@ -143,11 +146,21 @@ const onLogin = async () => {
 }
 
 .brand-mark {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-xs);
   font-family: var(--font-mono);
   font-size: var(--text-xs);
   letter-spacing: 0.12em;
   text-transform: uppercase;
   color: var(--gold);
+}
+
+.brand-icon-img {
+  width: 20px;
+  height: 20px;
+  object-fit: contain;
+  border-radius: 4px;
 }
 
 .panel-copy h1 {

@@ -7,6 +7,9 @@ Route.post('/refresh', 'AuthController.refresh')
 
 // Protected Routes (Require JWT Auth)
 Route.group(() => {
+  // Dashboard
+  Route.get('/dashboard/stats', 'DashboardController.stats')
+
   // User Profile & Settings
   Route.get('/user/profile', 'UsersController.profile')
   Route.put('/user/profile', 'UsersController.updateProfile')

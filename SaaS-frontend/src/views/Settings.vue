@@ -473,7 +473,7 @@ const profileForm = reactive({
 
 // Workspace state
 const workspaceForm = reactive({
-  name: localStorage.getItem('workspaceName') || 'Handle Workspace',
+  name: localStorage.getItem('workspaceName') || 'Jaxora Workspace',
   email: localStorage.getItem('workspaceEmail') || '',
   phone: localStorage.getItem('workspacePhone') || '',
   currency: localStorage.getItem('workspaceCurrency') || 'INR',
