@@ -294,7 +294,7 @@ export default class InvoiceService {
   /**
    * Send invoice email to client
    */
-  public async sendInvoiceEmail(id: number) {
-    // TODO: Load invoice with client details, attach PDF, send via Mailer
-  }
+  // public async sendInvoiceEmail(id: number) {
+  //   // TODO: Load invoice with client details, attach PDF, send via Mailer
+  // }
 }

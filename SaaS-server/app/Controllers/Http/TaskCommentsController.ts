@@ -98,7 +98,7 @@ export default class TaskCommentsController {
 
       const content = request.input('content') !== undefined ? request.input('content') : request.input('text')
       if (content !== undefined) {
-        res.content = content.trim()
+        res.text = content.trim()
       }
 
       if (request.input('developerId') !== undefined || request.input('developer_id') !== undefined) {
