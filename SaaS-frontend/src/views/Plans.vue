@@ -258,7 +258,7 @@ const onPlanSelected = async (plan: PlanData) => {
       key: orderData.keyId,
       amount: orderData.amount, // in paise
       currency: orderData.currency || 'INR',
-      name: 'Handle',
+      name: 'Jaxora',
       description: `${plan.name} Plan Subscription`,
       order_id: orderData.orderId,
       prefill: {

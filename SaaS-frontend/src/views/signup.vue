@@ -2,7 +2,7 @@
   <div class="auth-shell">
     <!-- Left brand panel -->
     <aside class="auth-panel">
-      <div class="brand-mark">MyApp</div>
+      <div class="brand-mark">Jaxora</div>
 
       <div class="panel-copy">
         <h1>Run the business<br />from one ledger.</h1>
@@ -24,7 +24,7 @@
         </li>
       </ul>
 
-      <div class="panel-foot">© {{ new Date().getFullYear() }} MyApp</div>
+      <div class="panel-foot">© {{ new Date().getFullYear() }} Jaxora</div>
     </aside>
 
     <!-- Right form panel -->

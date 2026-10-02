@@ -8,7 +8,7 @@
           <line x1="9" y1="3" x2="9" y2="21"></line>
         </svg>
       </div>
-      <span class="brand-title">Handle</span>
+      <span class="brand-title">Jaxora</span>
     </div>
 
     <!-- Sidebar Navigation -->
