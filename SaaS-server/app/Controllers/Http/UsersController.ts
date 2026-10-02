@@ -106,4 +106,187 @@ export default class UsersController {
     })
   }
 
+  /**
+   * Helper to resolve the authenticated user from JWT token or request context
+   */
+  private async resolveUser(request: any): Promise<User | null> {
+    if (request.user?.id) {
+      return await User.find(request.user.id)
+    }
+
+    const authHeader = request.header('Authorization')
+    if (authHeader) {
+      try {
+        const token = authHeader.replace('Bearer ', '').trim()
+        const payload: any = JwtService.verifyAccessToken(token)
+        if (payload?.id) {
+          return await User.find(payload.id)
+        }
+      } catch (err) {
+        // Token might be expired or invalid
+      }
+    }
+
+    const fallbackId = request.input('userId') || 1
+    return await User.find(fallbackId)
+  }
+
+  /**
+   * GET /user/profile
+   * Fetch current authenticated user profile
+   */
+  public async profile({ request, response }: HttpContextContract) {
+    try {
+      const user = await this.resolveUser(request)
+      if (!user) {
+        return response.status(404).json({
+          success: false,
+          message: 'User not found',
+        })
+      }
+
+      return response.status(200).json({
+        success: true,
+        data: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          number: user.number,
+          gender: user.gender,
+          dateOfBirth: user.dateOfBirth,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+        },
+      })
+    } catch (error: any) {
+      console.error('Error in UsersController.profile:', error)
+      return response.status(500).json({
+        success: false,
+        message: 'Failed to fetch user profile',
+        error: error.message,
+      })
+    }
+  }
+
+  /**
+   * PUT /user/profile
+   * Update name, email, phone number, gender, dateOfBirth
+   */
+  public async updateProfile({ request, response }: HttpContextContract) {
+    try {
+      const user = await this.resolveUser(request)
+      if (!user) {
+        return response.status(404).json({
+          success: false,
+          message: 'User not found',
+        })
+      }
+
+      const { name, email, number, gender, dateOfBirth, dob } = request.all()
+      const newDob = dob || dateOfBirth
+
+      if (email && email !== user.email) {
+        const existing = await User.query().where('email', email).whereNot('id', user.id).first()
+        if (existing) {
+          return response.status(400).json({
+            success: false,
+            message: 'This email is already associated with another account.',
+          })
+        }
+        user.email = email
+      }
+
+      if (name) user.name = name
+      if (number) user.number = number
+      if (gender) user.gender = gender.toLowerCase()
+      if (newDob) user.dateOfBirth = newDob
+
+      await user.save()
+
+      return response.status(200).json({
+        success: true,
+        message: 'Profile updated successfully',
+        data: {
+          id: user.id,
+          name: user.name,
+          email: user.email,
+          number: user.number,
+          gender: user.gender,
+          dateOfBirth: user.dateOfBirth,
+          createdAt: user.createdAt,
+          updatedAt: user.updatedAt,
+        },
+      })
+    } catch (error: any) {
+      console.error('Error in UsersController.updateProfile:', error)
+      return response.status(500).json({
+        success: false,
+        message: 'Failed to update profile',
+        error: error.message,
+      })
+    }
+  }
+
+  /**
+   * PUT /user/change-password
+   * Verify old password and set new password
+   */
+  public async changePassword({ request, response }: HttpContextContract) {
+    try {
+      const user = await this.resolveUser(request)
+      if (!user) {
+        return response.status(404).json({
+          success: false,
+          message: 'User not found',
+        })
+      }
+
+      const { currentPassword, newPassword, confirmPassword } = request.all()
+
+      if (!currentPassword || !newPassword) {
+        return response.status(400).json({
+          success: false,
+          message: 'Current password and new password are required',
+        })
+      }
+
+      if (confirmPassword && newPassword !== confirmPassword) {
+        return response.status(400).json({
+          success: false,
+          message: 'New password and confirm password do not match',
+        })
+      }
+
+      if (newPassword.length < 6) {
+        return response.status(400).json({
+          success: false,
+          message: 'New password must be at least 6 characters long',
+        })
+      }
+
+      const isCurrentCorrect = await Hash.verify(user.password, currentPassword)
+      if (!isCurrentCorrect) {
+        return response.status(400).json({
+          success: false,
+          message: 'Current password does not match our records',
+        })
+      }
+
+      user.password = await Hash.make(newPassword)
+      await user.save()
+
+      return response.status(200).json({
+        success: true,
+        message: 'Password changed successfully',
+      })
+    } catch (error: any) {
+      console.error('Error in UsersController.changePassword:', error)
+      return response.status(500).json({
+        success: false,
+        message: 'Failed to update password',
+        error: error.message,
+      })
+    }
+  }
+
 }

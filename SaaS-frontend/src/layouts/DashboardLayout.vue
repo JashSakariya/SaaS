@@ -14,7 +14,7 @@
           </span>
         </div>
         <div class="topbar-right">
-          <span class="welcome">Welcome, <strong class="user-name">Jash</strong></span>
+          <span class="welcome">Welcome, <strong class="user-name">{{ currentUserName }}</strong></span>
           <button class="logout-btn" @click="handleLogout">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="margin-right: 6px; vertical-align: -2px;">
               <path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path>
@@ -35,10 +35,24 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted, onUnmounted } from 'vue'
 import Sidebar from '@/components/Sidebar.vue'
 import { useRouter } from 'vue-router'
 
 const router = useRouter()
+const currentUserName = ref(localStorage.getItem('userName') || 'Jash')
+
+const syncUserName = () => {
+  currentUserName.value = localStorage.getItem('userName') || 'Jash'
+}
+
+onMounted(() => {
+  window.addEventListener('user-updated', syncUserName)
+})
+
+onUnmounted(() => {
+  window.removeEventListener('user-updated', syncUserName)
+})
 
 const handleLogout = () => {
   localStorage.removeItem('accessToken')
