@@ -751,7 +751,7 @@ const toggleDropdown = (event: MouseEvent, inv: Invoice) => {
 // PDF Download logic
 const downloadPdf = (inv: Invoice | null) => {
   if (!inv || !inv.id) return
-  const baseURL = api.defaults.baseURL || 'http://127.0.0.1:3334'
+  const baseURL = api.defaults.baseURL || import.meta.env.VITE_API_URL || 'http://127.0.0.1:3334'
   window.open(`${baseURL}/invoices/${inv.id}/pdf`, '_blank')
 }
 
