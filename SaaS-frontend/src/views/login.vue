@@ -74,7 +74,7 @@
 
         <p class="switch-link">
           Don't have an account?
-          <router-link to="/">Sign up</router-link>
+          <router-link to="/signup">Sign up</router-link>
         </p>
       </div>
     </main>
