@@ -76,6 +76,8 @@ Route.group(() => {
     Route.post('/create-order', 'PaymentsController.createOrder')
     Route.post('/verify', 'PaymentsController.verifyPayment')
   }).prefix('/payments')
+  // Calendar Events
+  Route.get('/calendar/events', 'CalendarController.index')
 }).middleware('auth')
 
 // Invoice PDF Download (accessible via direct browser window.open)

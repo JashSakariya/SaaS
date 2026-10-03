@@ -15,6 +15,7 @@ import Invoices from '@/views/invoices.vue'
 import CreateInvoice from '@/views/createInvoice.vue'
 import Plans from '@/views/Plans.vue'
 import Settings from '@/views/Settings.vue'
+import Calendar from '@/views/calendar.vue'
 
 const router = createRouter({
   history: createWebHistory(),
@@ -64,6 +65,11 @@ const router = createRouter({
           path: 'invoices/new',
           name: 'new-invoice',
           component: CreateInvoice,
+        },
+        {
+          path: 'calendar',
+          name: 'calendar',
+          component: Calendar,
         },
         {
           path: 'invoices/edit/:id',
